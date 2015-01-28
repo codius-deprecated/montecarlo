@@ -19,7 +19,7 @@ slack.on('message', function(message) {
       text = message.text,
       response = '';
 
-  console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
+  //console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
 
   if (type == 'message' && channel.name == 'snack-requests') {
     channel.send('Denied.');
