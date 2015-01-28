@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^0.5.1",
     "slack-client": "^1.2.2"
   },
   "engines": {
