@@ -1,0 +1,14 @@
+{
+  "name": "montecarlo",
+  "version": "0.0.1",
+  "description": "Ripple Labs' \"Friendly\" \"Helpful\" \"Robot\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "slack-client": "^1.2.2"
+  }
+}
