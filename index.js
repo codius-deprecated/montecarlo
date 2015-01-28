@@ -22,11 +22,7 @@ slack.on('message', function(message) {
   //console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
 
   if (type == 'message' && channel.name == 'snack-requests') {
-    if (Math.random() * 100 < 2) {
-      channel.send("I'll sleep on it.");
-    } else {
-      channel.send('Denied.');
-    }
+    do_snack_request(channel);
   }
 });
 
@@ -35,3 +31,13 @@ slack.on('error', function(error) {
 });
 
 slack.login();
+
+var do_snack_request = function(channel) {
+  if (Math.random() * 100 < 2) {
+    channel.send("I'll sleep on it.");
+  } else {
+    channel.send('Denied.');
+  }
+}
+
+module.exports.do_snack_request = do_snack_request;
