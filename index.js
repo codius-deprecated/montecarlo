@@ -7,6 +7,8 @@ var token = process.env.SLACK_TOKEN,
 var slack = new Slack(token, autoReconnect, autoMark);
 
 slack.on('open', function() {
+  var channel = slack.getChannelByName('montecarlo-dev');
+  channel.send("I've been rebooted!");
 });
 
 slack.on('message', function(message) {
