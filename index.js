@@ -22,7 +22,11 @@ slack.on('message', function(message) {
   //console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
 
   if (type == 'message' && channel.name == 'snack-requests') {
-    channel.send('Denied.');
+    if (Math.random() * 100 < 2) {
+      channel.send("I'll sleep on it.");
+    } else {
+      channel.send('Denied.');
+    }
   }
 });
 
