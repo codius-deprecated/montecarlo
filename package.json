@@ -10,5 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "slack-client": "^1.2.2"
+  },
+  "engines": {
+    "node": "0.10.x"
   }
 }
