@@ -4,6 +4,7 @@ var tracker = require('pivotaltracker');
 var bluebird = require('bluebird');
 var Redis = require('redis');
 var url = require('url');
+var reviewer = require('./lib/reviewer');
 
 bluebird.longStackTraces();
 
@@ -50,45 +51,6 @@ github.authenticate({
   type: "oauth",
   token: process.env.GITHUB_TOKEN
 });
-
-function PullRequestReviewer(redis, user, repo) {
-  this.redis = redis;
-  this.repo = repo;
-  this.user = user;
-  this.processors = [];
-}
-
-PullRequestReviewer.prototype = {
-  reviewAll: function() {
-    return this.getPullRequests(1);
-  },
-  addProcessor: function(processor) {
-    this.processors.push(processor);
-  },
-  getPullRequests: function(page) {
-    var self = this;
-    return github.pullRequests.getAllAsync({
-      repo: self.repo,
-      user: self.user,
-      state: 'open',
-      per_page: 100,
-      page: page
-    }).then(function(prs) {
-      if (prs.length > 0) {
-        var p = [];
-        prs.forEach(function(pr) {
-          self.processors.forEach(function(processor) {
-            p.push(processor.review(pr));
-          });
-        });
-        if (prs.length == 100) {
-          p.push(self.getPullRequests(page + 1));
-        }
-        return bluebird.all(p);
-      }
-    });
-  }
-};
 
 /*function pullPRs(user, repo, page) {
   return github.pullRequests.getAllAsync({
@@ -140,7 +102,7 @@ function getAllLGTMs() {
   }).then(function(repos) {
     var p = [];
     repos.forEach(function(repo) {
-      var reviewer = new PullRequestReviewer(redis, repo.owner.login, repo.name);
+      var reviewer = new reviewer.PullRequestReviewer(redis, github, repo.owner.login, repo.name);
       reviewer.addProcessor(new reviewers.LGTMProcessor(github, reviewer, 1));
       /*reviewer.addReviewer(new LGTMReviewer(github, reviewer, 2));
       reviewer.addReviewer(new TrackerReviewer(reviewer, process.env.TRACKER_PROJECT_ID));*/
