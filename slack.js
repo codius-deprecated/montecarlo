@@ -1,5 +1,6 @@
 var Slack = require('slack-client');
 var dotenv = require('dotenv');
+var do_snack_request = require('lib/slack').do_snack_request;
 
 dotenv.load();
 
@@ -34,13 +35,3 @@ slack.on('error', function(error) {
 });
 
 slack.login();
-
-var do_snack_request = function(channel) {
-  if (Math.random() * 100 < 2) {
-    channel.send("I'll sleep on it.");
-  } else {
-    channel.send('Denied.');
-  }
-}
-
-module.exports.do_snack_request = do_snack_request;

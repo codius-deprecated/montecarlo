@@ -1,4 +1,4 @@
-var main = require('../index.js');
+var main = require('../lib/slack');
 var chai = require('chai');
 var expect = chai.expect;
 
