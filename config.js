@@ -10,7 +10,10 @@ dotenv.load();
 
 var redisURL = url.parse(process.env.REDISCLOUD_URL);
 var redis = Redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
-redis.auth(redisURL.auth.split(":")[1]);
+
+if (redisURL.auth) {
+  redis.auth(redisURL.auth.split(":")[1]);
+}
 
 var pivotal = new tracker.Client(process.env.TRACKER_TOKEN);
 
@@ -19,11 +22,12 @@ var github = new GitHubApi({
   protocol: "https",
 });
 
-
-github.authenticate({
-  type: "oauth",
-  token: process.env.GITHUB_TOKEN
-});
+if (process.env.GITHUB_TOKEN) {
+  github.authenticate({
+    type: "oauth",
+    token: process.env.GITHUB_TOKEN
+  });
+}
 
 bluebird.promisifyAll(github.repos);
 bluebird.promisifyAll(github.misc);
