@@ -25,12 +25,15 @@ config.github.misc.rateLimitAsync({}).then(function(limits) {
   if (limits.resources.core.remaining > min) {
     var repos = ['codius-engine', 'codius-host', 'codius-sandbox', 'codius-sandbox-core'];
     var p = [];
+    config.redis.hset("crawl-state", "running", true);
     repos.forEach(function(repoName) {
       var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', repoName);
       r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
       p.push(r.reviewAll());
     });
-    return bluebird.all(p);
+    return bluebird.all(p).then(function() {
+      config.redis.hset("crawl-state", "running", false);
+    });
   } else {
     console.log("I'll only run with at least %d requests available.", min);
   }

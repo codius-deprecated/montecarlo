@@ -1,0 +1,25 @@
+doctype html
+html(lang="en")
+  head
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.0/css/foundation.min.css")
+    title Codius Pull Requests
+  body
+    div(class="row")
+      div(class="large-12")
+        h1 Active pull requests
+        table
+          tr
+            th Repository
+            th Number
+          each val in queue
+            tr
+              td
+                a(href="http://github.com/"+val.user+"/"+val.repo)= val.user+"/"+val.repo
+              td
+                a(href="https://github.com/"+val.user+"/"+val.repo+"/pull/"+val.number)= val.number
+        p= "Last run was "+lastRun
+        p
+          if isRunning
+            span Crawler is currently running.
+          else
+            span Crawler is idle.
