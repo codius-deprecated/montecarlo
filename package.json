@@ -4,7 +4,7 @@
   "description": "Ripple Labs' \"Friendly\" \"Helpful\" \"Robot\"",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "author": "",
   "license": "ISC",
@@ -23,6 +23,7 @@
   "devDependencies": {
     "chai": "^1.10.0",
     "chai-as-promised": "^4.1.1",
+    "mocha": "^2.1.0",
     "replay": "^1.12.0"
   }
 }
