@@ -30,7 +30,7 @@ app.get('/', function(req, res) {
 
 config.redis.hset("crawl-state", "running", false);
 
-app.get('/crawl', function(req, res) {
+app.get('/github-hook', function(req, res) {
   var repos = ['codius-engine', 'codius-host', 'codius-sandbox', 'codius-sandbox-core'];
   var p = [];
   config.redis.hgetAsync("crawl-state", "running").then(function(isRunning) {
