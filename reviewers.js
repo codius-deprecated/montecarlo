@@ -56,26 +56,43 @@ module.exports.LGTMProcessor.prototype = {
 
   checkAndMergePR: function(buildSucceeded, lgtms, pr) {
     var self = this;
+    self.reviewer.redis.hsetAsync(['review-status:'+pr.number, 'ci-result', buildSucceeded]);
+    self.reviewer.redis.hsetAsync(['review-status:'+pr.number, 'lgtm-count', lgtms.length]);
     if (lgtms.length >= self.threshold) {
       if (buildSucceeded) {
         console.log("Build has succeeded and we have enough LGTMs. Merging %s/%s/%d!", self.reviewer.user, self.reviewer.repo, pr.number);
         var comment = self.buildComment(lgtms);
         var commitMsg = self.buildCommitMessage(lgtms);
-        /*return self.github.issues.createCommentAsync({
+        return self.github.issues.createCommentAsync({
           user: self.reviewer.user,
           repo: self.reviewer.repo,
           number: pr.number,
           body: comment
-        }).then({
+        }).then(function() {
           return self.github.pullRequests.mergeAsync({
             user: self.reviewer.user,
             repo: self.reviewer.repo,
             number: pr.number,
             commit_message: commitMsg
           });
-        });*/
+        }).then(function() {
+          self.reviewer.redis.hsetAsync(['review-status:'+pr.number, 'merged', true]);
+        });
       } else {
         console.log("Build did not succeed, but we have enough LGTMs. Should probably poke someone, eh?");
+        return self.reviewer.redis.hgetAsync(["review-pings:"+pr.number, "github"]).then(function(data) {
+          if (!data) {
+            /*var comment = self.buildFailedBuildNagComment();
+            return self.github.issues.createCommentAsync({
+              user: self.reviewer.user,
+              repo: self.reviewer.repo,
+              number: pr.number,
+              body: comment
+            }).then(function() {
+              return self.reviewer.redis.hsetAsync(["review-pings:"+pr.number, "github", true]);
+            });*/
+          }
+        });
         // TODO: Notify in slack or via github pings
       }
     } else {
@@ -84,13 +101,17 @@ module.exports.LGTMProcessor.prototype = {
     }
   },
 
+  buildFailedBuildNagComment: function() {
+    return "I'm seeing enough +1s to merge this but the build has failed, so I won't autmoatically merge it."
+  },
+
   buildComment: function(lgtms) {
     var people = "";
     lgtms.forEach(function(l) {
       people += format("* {login}", l.user);
     });
 
-    return format("I'm seeing {count} +1s from the following folks:\n\n"+
+    return format("The build is good and I'm seeing {count} +1s from the following folks:\n\n"+
       "{people}\n\n"+
       "As such, I'll attempt to merge and close this pull request.", {
       count: lgtms.length,

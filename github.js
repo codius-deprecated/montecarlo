@@ -2,6 +2,7 @@ var dotenv = require('dotenv');
 var GitHubApi = require('github');
 var tracker = require('pivotaltracker');
 var bluebird = require('bluebird');
+var Redis = require('redis');
 var url = require('url');
 
 bluebird.longStackTraces();
@@ -24,6 +25,10 @@ function randomAssignee() {
   return availableAssignees[Math.floor(Math.random()*availableAssignees.length)];
 }
 
+var redisURL = url.parse(process.env.REDISCLOUD_URL);
+var redis = Redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
+redis.auth(redisURL.auth.split(":")[1]);
+
 var pivotal = new tracker.Client(process.env.TRACKER_TOKEN);
 
 var github = new GitHubApi({
@@ -39,13 +44,15 @@ bluebird.promisifyAll(github.statuses);
 bluebird.promisifyAll(Object.getPrototypeOf(pivotal.project(0).labels));
 bluebird.promisifyAll(Object.getPrototypeOf(pivotal.project(0).story(0)));
 bluebird.promisifyAll(Object.getPrototypeOf(pivotal.project(0).story(0).comments));
+bluebird.promisifyAll(redis);
 
 github.authenticate({
   type: "oauth",
   token: process.env.GITHUB_TOKEN
 });
 
-function PullRequestReviewer(user, repo) {
+function PullRequestReviewer(redis, user, repo) {
+  this.redis = redis;
   this.repo = repo;
   this.user = user;
   this.processors = [];
@@ -133,7 +140,7 @@ function getAllLGTMs() {
   }).then(function(repos) {
     var p = [];
     repos.forEach(function(repo) {
-      var reviewer = new PullRequestReviewer(repo.owner.login, repo.name);
+      var reviewer = new PullRequestReviewer(redis, repo.owner.login, repo.name);
       reviewer.addProcessor(new reviewers.LGTMProcessor(github, reviewer, 1));
       /*reviewer.addReviewer(new LGTMReviewer(github, reviewer, 2));
       reviewer.addReviewer(new TrackerReviewer(reviewer, process.env.TRACKER_PROJECT_ID));*/
