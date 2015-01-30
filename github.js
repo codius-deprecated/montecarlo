@@ -1,16 +1,8 @@
-var dotenv = require('dotenv');
-var GitHubApi = require('github');
-var tracker = require('pivotaltracker');
-var bluebird = require('bluebird');
-var Redis = require('redis');
-var url = require('url');
+var config = require('./config');
 var reviewer = require('./lib/reviewer');
-
-bluebird.longStackTraces();
-
 var reviewers = require('./reviewers');
 
-dotenv.load();
+var bluebird = require('bluebird');
 
 var availableReviewers = [
   "tdfischer",
@@ -25,32 +17,6 @@ var lgtmThreshold = 1;
 function randomAssignee() {
   return availableAssignees[Math.floor(Math.random()*availableAssignees.length)];
 }
-
-var redisURL = url.parse(process.env.REDISCLOUD_URL);
-var redis = Redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
-redis.auth(redisURL.auth.split(":")[1]);
-
-var pivotal = new tracker.Client(process.env.TRACKER_TOKEN);
-
-var github = new GitHubApi({
-  version: "3.0.0",
-  protocol: "https",
-});
-
-bluebird.promisifyAll(github.repos);
-bluebird.promisifyAll(github.misc);
-bluebird.promisifyAll(github.pullRequests);
-bluebird.promisifyAll(github.issues);
-bluebird.promisifyAll(github.statuses);
-bluebird.promisifyAll(Object.getPrototypeOf(pivotal.project(0).labels));
-bluebird.promisifyAll(Object.getPrototypeOf(pivotal.project(0).story(0)));
-bluebird.promisifyAll(Object.getPrototypeOf(pivotal.project(0).story(0).comments));
-bluebird.promisifyAll(redis);
-
-github.authenticate({
-  type: "oauth",
-  token: process.env.GITHUB_TOKEN
-});
 
 /*function pullPRs(user, repo, page) {
   return github.pullRequests.getAllAsync({
@@ -96,17 +62,17 @@ github.authenticate({
 }*/
 
 function getAllLGTMs() {
-  return github.repos.getFromOrgAsync({
+  return config.github.repos.getFromOrgAsync({
     org: 'codius',
     per_page: 100
   }).then(function(repos) {
     var p = [];
     repos.forEach(function(repo) {
-      var reviewer = new reviewer.PullRequestReviewer(redis, github, repo.owner.login, repo.name);
-      reviewer.addProcessor(new reviewers.LGTMProcessor(github, reviewer, 1));
+      var r = new reviewer.PullRequestReviewer(config.redis, config.github, repo.owner.login, repo.name);
+      r.addProcessor(new reviewers.LGTMProcessor(config.github, r, 1));
       /*reviewer.addReviewer(new LGTMReviewer(github, reviewer, 2));
       reviewer.addReviewer(new TrackerReviewer(reviewer, process.env.TRACKER_PROJECT_ID));*/
-      p.push(reviewer.reviewAll());
+      p.push(r.reviewAll());
     });
     return bluebird.all(p);
   }).catch(function(e) {
@@ -114,7 +80,7 @@ function getAllLGTMs() {
   });
 }
 
-github.misc.rateLimitAsync({}).then(function(limits) {
+config.github.misc.rateLimitAsync({}).then(function(limits) {
   var min = 100;
   console.log("Only %d requests available. Limit resets in about %d minutes.", limits.resources.core.remaining, Math.ceil((limits.resources.core.reset - Math.floor(Date.now()/1000))/60));
   if (limits.resources.core.remaining > min) {
