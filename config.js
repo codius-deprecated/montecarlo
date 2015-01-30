@@ -42,5 +42,6 @@ bluebird.promisifyAll(redis);
 module.exports = {
   github: github,
   pivotal: pivotal,
-  redis: redis
+  redis: redis,
+  lgtmThreshold: 1
 }
