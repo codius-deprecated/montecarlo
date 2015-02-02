@@ -33,14 +33,14 @@ app.get('/', function(req, res) {
 
 config.redis.hset("crawl-state", "running", false);
 
-app.get('/github-hook', function(req, res) {
+app.post('/github-hook', function(req, res) {
   var eventType = req.headers['x-github-event'];
   if (eventType == 'status') {
     var r = new reviewer.PullRequestReviewer(
       config.redis,
       config.github,
-      req.repository.owner.login,
-      req.repository.name
+      req.body.repository.owner.login,
+      req.body.repository.name
     );
     r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
     r.addProcessor(new reviewers.TrackerProcessor(project, r));
@@ -49,34 +49,38 @@ app.get('/github-hook', function(req, res) {
     var r = new reviewer.PullRequestReviewer(
       config.redis,
       config.github,
-      req.repository.owner.login,
-      req.repository.name
+      req.body.repository.owner.login,
+      req.body.repository.name
     );
     r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
     r.addProcessor(new reviewers.TrackerProcessor(project, r));
-    r.reviewOne(req.issue.number);
+    r.reviewOne(req.body.issue.number);
   } else if (eventType == 'pull_request') {
-    if (req.action == "opened" || req.action == "reopened" || req.action == "closed") {
+    if (req.body.action == "opened" || req.body.action == "reopened" || req.body.action == "closed") {
       var r = new reviewer.PullRequestReviewer(
         config.redis,
         config.github,
-        req.pull_request.base.repo.owner.login,
-        req.pull_request.base.repo.name
+        req.body.pull_request.base.repo.owner.login,
+        req.body.pull_request.base.repo.name
       );
       r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
       r.addProcessor(new reviewers.TrackerProcessor(project, r));
-      r.reviewOne(req.pull_request.number);
+      r.reviewOne(req.body.pull_request.number);
     }
+    res.send("Handling pull request");
   } else if (eventType == 'push') {
     var r = new reviewer.PullRequestReviewer(
       config.redis,
       config.github,
-      req.repository.owner.login,
-      req.repository.name
+      req.body.repository.owner.login,
+      req.body.repository.name
     );
     r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
     r.addProcessor(new reviewers.TrackerProcessor(project, r));
     r.reviewAll();
+    res.send("Starting to handle push");
+  } else {
+    res.send("Unknown event: " + JSON.stringify(req.body));
   }
 });
 
