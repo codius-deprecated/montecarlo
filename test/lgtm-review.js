@@ -8,7 +8,10 @@ var sinon = require('sinon');
 var bluebird = require('bluebird');
 var sinonAsPromised = require('sinon-as-promised')(bluebird.Promise);
 var lgtm = require('../lib/reviewers/lgtm');
+var tracker = require('../lib/reviewers/tracker');
 var fx = require('node-fixtures');
+var labelClass = require('pivotaltracker/lib/resources/label').Service;
+var storyClass = require('pivotaltracker/lib/resources/story').Service;
 
 chai.use(chaiAsPromised);
 
@@ -33,6 +36,13 @@ sinon.stub(config.github.pullRequests, "getCommitsAsync", singlePage(fx.commits,
 sinon.stub(config.github.statuses, "getCombinedAsync", singlePage(fx.statuses, {statuses: []}));
 sinon.stub(config.github.issues, "getCommentsAsync", singlePage(fx.comments, []));
 sinon.stub(config.github.issues, "createCommentAsync").resolves([]);
+sinon.stub(labelClass.prototype, "allAsync").resolves(fx.labels);
+sinon.stub(storyClass.prototype, "getAsync").resolves(fx.story);
+sinon.stub(labelClass.prototype, "createAsync", function(args) {
+  return new bluebird.Promise(function(resolve, reject) {
+    resolve(args);
+  });
+});
 
 var MockProcessor = function() {
   this.seen_ids = [];
@@ -75,5 +85,34 @@ it('merges a valid pull request', function(done) {
   sinon.spy(proc, "mergePR");
   expect(proc.review(fx.pullRequests[0])).to.be.fulfilled.then(function() {
     expect(proc.mergePR.called).to.equal(true);
+  }).then(done);
+});
+
+it('extracts a set of tracker story IDs', function(done) {
+  var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', 'codius-sandbox-core');
+  var proj = config.pivotal.project(0);
+  var proc = new tracker.TrackerProcessor(proj, r, 1);
+  expect(proc.getTrackerStories(fx.pullRequests[0], 1)).to.be.fulfilled.then(function(v) {
+    expect(v).to.deep.equal([1]);
+  }).then(done);
+});
+
+it('marks an item as delivered when a PR is created', function(done) {
+  var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', 'codius-sandbox-core');
+  var proj = config.pivotal.project(1);
+  var proc = new tracker.TrackerProcessor(proj, r, 1);
+  sinon.spy(proc, "markStoryDelivered");
+  expect(proc.review(fx.pullRequests[0])).to.be.fulfilled.then(function() {
+    expect(proc.markStoryDelivered.called).to.equal(true);
+  }).then(done);
+});
+
+it('marks an item as accepted when a PR is merged', function(done) {
+  var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', 'codius-sandbox-core');
+  var proj = config.pivotal.project(1);
+  var proc = new tracker.TrackerProcessor(proj, r, 1);
+  sinon.spy(proc, "markStoryAccepted");
+  expect(proc.review(fx.pullRequests[1])).to.be.fulfilled.then(function() {
+    expect(proc.markStoryAccepted.called).to.equal(true);
   }).then(done);
 });

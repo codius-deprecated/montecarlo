@@ -1,8 +1,14 @@
 [
   {
-    "sha": "foo"
+    "sha": "foo",
+    "commit": {
+      "message": "foo"
+    }
   },
   {
-    "sha": "bar"
+    "sha": "bar",
+    "commit": {
+      "message": "[Fixes #1]"
+    }
   }
 ]
