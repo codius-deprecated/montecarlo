@@ -1,8 +1,11 @@
 language: node_js
 node_js:
-  - "0.10"
+- '0.10'
 env:
   global:
-    - REDISCLOUD_URL="redis://localhost:7777"
-    - TRACKER_TOKEN=""
-    - GITHUB_TOKEN=""
+  - REDISCLOUD_URL="redis://localhost:7777"
+  - TRACKER_TOKEN=""
+  - GITHUB_TOKEN=""
+notifications:
+  slack:
+    secure: HHMDVg5Ty439EVoEtxJKXSOp9c/xs8VKuxE+Bkje5x/24knp1dKmIsGaPD8upTdCgXDkie0+WmGPkD6FKFt5tnOHZN3i58uOofDyou57U4xFa0WA/Px5N/hG39SRkOcMT/zqTpxkyxsqpt9d9ljEtIUGretz6/JNr51ItAEXmro=
