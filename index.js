@@ -7,7 +7,7 @@ var reviewer = require('./lib/reviewer');
 var bodyParser = require('body-parser');
 
 var reviewers = {
-  LGTMProcessor: require('./lib/reviewers/lgtm').LGTMProcessor
+  LGTMProcessor: require('./lib/reviewers/lgtm').LGTMProcessor,
   TrackerProcessor: require('./lib/reviewers/tracker').TrackerProcessor
 };
 
