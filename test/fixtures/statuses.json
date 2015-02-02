@@ -1,0 +1,6 @@
+{
+  "statuses": [{
+    "context": "continuous-integration/travis-ci",
+    "state": "success"
+  }]
+}
