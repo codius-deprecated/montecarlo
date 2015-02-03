@@ -86,26 +86,18 @@ app.post('/github-hook', function(req, res) {
 });
 
 app.get('/crawl', function(req, res) {
-  var repos = ['codius-engine', 'codius-host', 'codius-sandbox', 'codius-sandbox-core'];
-  var p = [];
   var project = config.pivotal.project(process.env.TRACKER_PROJECT_ID);
-  config.redis.hgetAsync("crawl-state", "running").then(function(isRunning) {
-    if (!JSON.parse(isRunning)) {
-      config.redis.hset("crawl-state", "running", true);
-      repos.forEach(function(repoName) {
-        var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', repoName);
-        r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
-        r.addProcessor(new reviewers.TrackerProcessor(project, r));
-        p.push(r.reviewAll());
-      });
-      res.send("Running crawler!");
-      return bluebird.all(p).finally(function() {
-        config.redis.hset("crawl-state", "running", false);
-      });
-    } else {
-      res.send("Crawler is already running.");
-    }
-  });
+  return config.redis.smembersAsync("pull-requests").map(JSON.parse).then(function(reqs) {
+    var p = [];
+    repos.forEach(function(reqs) {
+      var r = new reviewer.PullRequestReviewer(config.redis, config.github, reqs.repo, reqs.repo);
+      r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
+      r.addProcessor(new reviewers.TrackerProcessor(project, r));
+      p.push(r.reviewOne(reqs.number));
+    });
+    res.send("Running crawler!");
+    return bluebird.all(p);
+  })
 });
 
 app.listen(app.get('port'), function() {
