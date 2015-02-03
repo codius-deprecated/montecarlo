@@ -85,7 +85,7 @@ app.post('/github-hook', function(req, res) {
   }
 });
 
-function crawlOpenPRs() {
+app.get('/crawl', function(req, res) {
   var repos = ['codius-engine', 'codius-host', 'codius-sandbox', 'codius-sandbox-core'];
   var p = [];
   var project = config.pivotal.project(process.env.TRACKER_PROJECT_ID);
@@ -106,7 +106,7 @@ function crawlOpenPRs() {
       res.send("Crawler is already running.");
     }
   });
-};
+});
 
 app.listen(app.get('port'), function() {
   console.log('Dashboard is running at localhost:' + app.get('port'));
