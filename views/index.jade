@@ -5,7 +5,7 @@ html(lang="en")
     title Codius Pull Requests
   body
     div(class="row")
-      div(class="large-12")
+      div(class="medium-6 small-12 columns")
         h1 Active pull requests
         table
           tr
@@ -23,3 +23,16 @@ html(lang="en")
             span Crawler is currently running.
           else
             span Crawler is idle.
+      div(class="medium-6 small-12 columns")
+        h1 Build Status
+        table
+          tr
+            th Repository
+            th Last Build
+          each val in travis
+            if val.last_build_id
+              tr
+                td
+                  a(href="http://travis-ci.org/"+val.slug)= val.slug
+                td
+                  a(href="http://travis-ci.org/"+val.slug+"/builds/"+val.last_build_id)= val.last_build_number + ": "+val.last_build_state

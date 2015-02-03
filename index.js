@@ -21,11 +21,13 @@ app.get('/', function(req, res) {
     config.redis.smembersAsync("pull-requests").map(JSON.parse),
     config.redis.hgetAsync("crawl-state", "last-run"),
     config.redis.hgetAsync("crawl-state", "running"),
-    function(reqs, lastRun, isRunning) {
+    bluebird.promisify(config.travis.repos('codius').get)(),
+    function(reqs, lastRun, isRunning, travisRepos) {
       res.render('index', {
         queue: reqs,
         lastRun: moment(lastRun).format('MMM Do YY, h:mm:ss a'),
-        isRunning: isRunning
+        isRunning: isRunning,
+        travis: travisRepos.repos
       });
     }
   );
