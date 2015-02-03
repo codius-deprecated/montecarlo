@@ -4,12 +4,18 @@ var url = require('url');
 var GitHubApi = require('github');
 var dotenv = require('dotenv');
 var bluebird = require('bluebird');
+var Travis = require('travis-ci');
+
 bluebird.longStackTraces();
 
 dotenv.load();
 
 var redisURL = url.parse(process.env.REDISCLOUD_URL);
 var redis = Redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
+
+var travis = new Travis({
+  version: '2.0.0'
+});
 
 if (redisURL.auth) {
   redis.auth(redisURL.auth.split(":")[1]);
@@ -43,5 +49,6 @@ module.exports = {
   github: github,
   pivotal: pivotal,
   redis: redis,
-  lgtmThreshold: 1
+  lgtmThreshold: 1,
+  travis: travis
 }
