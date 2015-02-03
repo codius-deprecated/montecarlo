@@ -22,12 +22,13 @@ app.get('/', function(req, res) {
     config.redis.hgetAsync("crawl-state", "last-run"),
     config.redis.hgetAsync("crawl-state", "running"),
     bluebird.promisify(config.travis.repos('codius').get)(),
-    function(reqs, lastRun, isRunning, travisRepos) {
+    bluebird.promisify(config.travis.repos('ripple').get)(),
+    function(reqs, lastRun, isRunning, travisRepos, rippleRepos) {
       res.render('index', {
         queue: reqs,
         lastRun: moment(lastRun).format('MMM Do YY, h:mm:ss a'),
         isRunning: isRunning,
-        travis: travisRepos.repos
+        travis: travisRepos.repos.concat(rippleRepos.repos)
       });
     }
   );
