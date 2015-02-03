@@ -35,6 +35,7 @@ config.redis.hset("crawl-state", "running", false);
 
 app.post('/github-hook', function(req, res) {
   var eventType = req.headers['x-github-event'];
+  var project = config.pivotal.project(process.env.TRACKER_PROJECT_ID);
   if (eventType == 'status') {
     var r = new reviewer.PullRequestReviewer(
       config.redis,
