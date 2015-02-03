@@ -89,11 +89,11 @@ app.get('/crawl', function(req, res) {
   var project = config.pivotal.project(process.env.TRACKER_PROJECT_ID);
   return config.redis.smembersAsync("pull-requests").map(JSON.parse).then(function(reqs) {
     var p = [];
-    repos.forEach(function(reqs) {
-      var r = new reviewer.PullRequestReviewer(config.redis, config.github, reqs.repo, reqs.repo);
+    reqs.forEach(function(req) {
+      var r = new reviewer.PullRequestReviewer(config.redis, config.github, req.repo, req.repo);
       r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
       r.addProcessor(new reviewers.TrackerProcessor(project, r));
-      p.push(r.reviewOne(reqs.number));
+      p.push(r.reviewOne(req.number));
     });
     res.send("Running crawler!");
     return bluebird.all(p);
