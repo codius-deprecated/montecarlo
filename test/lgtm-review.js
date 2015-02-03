@@ -56,7 +56,7 @@ MockProcessor.prototype = {
 
 it('processes a list of pull requests', function(done) {
   var proc = new MockProcessor();
-  var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', 'codius-sandbox-core');
+  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
   r.addProcessor(proc);
   expect(r.reviewAll()).to.be.fulfilled.then(function() {
     expect(proc.seen_ids).to.deep.equal([1, 2]);
@@ -64,7 +64,7 @@ it('processes a list of pull requests', function(done) {
 });
 
 it('correctly confirms a successful build', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', 'codius-sandbox-core');
+  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
   var proc = new lgtm.LGTMProcessor(config.github, r, 1);
   expect(proc.getBuildStatus(fx.pullRequests[0], 1)).to.be.fulfilled.then(function(v) {
     expect(v).to.equal(true);
@@ -72,7 +72,7 @@ it('correctly confirms a successful build', function(done) {
 });
 
 it('correctly counts a number of LGTMs', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', 'codius-sandbox-core');
+  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
   var proc = new lgtm.LGTMProcessor(config.github, r, 1);
   expect(proc.getLGTMs(fx.pullRequests[0], 1)).to.be.fulfilled.then(function(v) {
     expect(v.length).to.equal(3);
@@ -80,7 +80,7 @@ it('correctly counts a number of LGTMs', function(done) {
 });
 
 it('merges a valid pull request', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', 'codius-sandbox-core');
+  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
   var proc = new lgtm.LGTMProcessor(config.github, r, 1);
   sinon.spy(proc, "mergePR");
   expect(proc.review(fx.pullRequests[0])).to.be.fulfilled.then(function() {
@@ -89,7 +89,7 @@ it('merges a valid pull request', function(done) {
 });
 
 it('extracts a set of tracker story IDs', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', 'codius-sandbox-core');
+  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
   var proj = config.pivotal.project(0);
   var proc = new tracker.TrackerProcessor(proj, r, 1);
   expect(proc.getTrackerStories(fx.pullRequests[0], 1)).to.be.fulfilled.then(function(v) {
@@ -98,7 +98,7 @@ it('extracts a set of tracker story IDs', function(done) {
 });
 
 it('marks an item as delivered when a PR is created', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', 'codius-sandbox-core');
+  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
   var proj = config.pivotal.project(1);
   var proc = new tracker.TrackerProcessor(proj, r, 1);
   sinon.spy(proc, "markStoryDelivered");
@@ -108,7 +108,7 @@ it('marks an item as delivered when a PR is created', function(done) {
 });
 
 it('marks an item as accepted when a PR is merged', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.redis, config.github, 'codius', 'codius-sandbox-core');
+  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
   var proj = config.pivotal.project(1);
   var proc = new tracker.TrackerProcessor(proj, r, 1);
   sinon.spy(proc, "markStoryAccepted");
