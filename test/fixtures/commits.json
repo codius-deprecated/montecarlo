@@ -8,7 +8,7 @@
   {
     "sha": "bar",
     "commit": {
-      "message": "[Fixes #1]"
+      "message": "[Fixes: #1]"
     }
   }
 ]
