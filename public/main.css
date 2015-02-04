@@ -1,0 +1,7 @@
+table.build-status tr.success {
+  background-color: #0f0 !important;
+}
+
+table.build-status tr.failed {
+  background-color: #f00 !important;
+}
