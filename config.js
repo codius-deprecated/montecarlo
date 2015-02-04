@@ -6,16 +6,22 @@ var dotenv = require('dotenv');
 var bluebird = require('bluebird');
 var Travis = require('travis-ci');
 var kue = require('kue');
-var TrackerLabelService = require('pivotaltracker/lib/resources/label').Service;
-var TrackerLabelType = require('pivotaltracker/lib/resources/label').Label;
-var TrackerStoryService = require('pivotaltracker/lib/resources/story').Service;
-var TrackerStoryType = require('pivotaltracker/lib/resources/story').Story;
-var TrackerCommentService = require('pivotaltracker/lib/resources/comment').Service;
-var TrackerCommentType = require('pivotaltracker/lib/resources/comment').Comment;
 
 bluebird.longStackTraces();
 
 dotenv.load();
+
+bluebird.promisifyAll(require('pivotaltracker/lib/resources/label').Service.prototype);
+bluebird.promisifyAll(require('pivotaltracker/lib/resources/label').Label.prototype);
+bluebird.promisifyAll(require('pivotaltracker/lib/resources/story').Service.prototype);
+bluebird.promisifyAll(require('pivotaltracker/lib/resources/story').Story.prototype);
+bluebird.promisifyAll(require('pivotaltracker/lib/resources/comment').Service.prototype);
+bluebird.promisifyAll(require('pivotaltracker/lib/resources/comment').Comment.prototype);
+bluebird.promisifyAll(Redis.RedisClient.prototype);
+
+var travis = new Travis({
+  version: '2.0.0'
+});
 
 var redisURL = url.parse(process.env.REDISCLOUD_URL);
 var redis = Redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
@@ -24,10 +30,6 @@ var queueOptions = {
   port: redisURL.port,
   host: redisURL.hostname
 };
-
-var travis = new Travis({
-  version: '2.0.0'
-});
 
 if (redisURL.auth) {
   redis.auth(redisURL.auth.split(":")[1]);
@@ -57,13 +59,6 @@ bluebird.promisifyAll(github.misc);
 bluebird.promisifyAll(github.pullRequests);
 bluebird.promisifyAll(github.issues);
 bluebird.promisifyAll(github.statuses);
-bluebird.promisifyAll(TrackerLabelService.prototype);
-bluebird.promisifyAll(TrackerLabelType.prototype);
-bluebird.promisifyAll(TrackerStoryService.prototype);
-bluebird.promisifyAll(TrackerStoryType.prototype);
-bluebird.promisifyAll(TrackerCommentService.prototype);
-bluebird.promisifyAll(TrackerCommentType.prototype);
-bluebird.promisifyAll(redis);
 
 module.exports = {
   github: github,
