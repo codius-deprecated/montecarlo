@@ -70,17 +70,11 @@ app.post('/github-hook', function(req, res) {
 });
 
 app.get('/crawl', function(req, res) {
-  return config.redis.smembersAsync("open-pull-requests").map(JSON.parse).then(function(reqs) {
-    var p = [];
-    reqs.forEach(function(req) {
-      var r = new reviewer.PullRequestReviewer(config.redis, config.github, req.user, req.repo);
-      r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
-      r.addProcessor(new reviewers.TrackerProcessor(project, r));
-      p.push(r.reviewOne(req.number));
-    });
-    res.send("Running crawler!");
-    return bluebird.all(p);
-  })
+  var repos = ['codius-sandbox', 'codius-sandbox-core', 'codius-engine', 'codius-host'];
+  repos.forEach(function(r) {
+    queue.enqueuePullRequest('codius', r, -1);
+  });
+  res.send("Running crawler!");
 });
 
 app.listen(app.get('port'), function() {
