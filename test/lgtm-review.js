@@ -12,6 +12,7 @@ var tracker = require('../lib/reviewers/tracker');
 var fx = require('node-fixtures');
 var labelClass = require('pivotaltracker/lib/resources/label').Service;
 var storyClass = require('pivotaltracker/lib/resources/story').Service;
+var commentClass = require('pivotaltracker/lib/resources/comment').Service;
 var PullRequestQueue = require('../lib/review-queue').PullRequestQueue;
 
 chai.use(chaiAsPromised);
@@ -37,8 +38,10 @@ sinon.stub(config.github.pullRequests, "getCommitsAsync", singlePage(fx.commits,
 sinon.stub(config.github.statuses, "getCombinedAsync", singlePage(fx.statuses, {statuses: []}));
 sinon.stub(config.github.issues, "getCommentsAsync", singlePage(fx.comments, []));
 sinon.stub(config.github.issues, "createCommentAsync").resolves([]);
-sinon.stub(labelClass.prototype, "allAsync").resolves(fx.labels);
 sinon.stub(storyClass.prototype, "getAsync").resolves(fx.story);
+sinon.stub(storyClass.prototype, "updateAsync").resolves([]);
+sinon.stub(commentClass.prototype, "createAsync").resolves([]);
+sinon.stub(labelClass.prototype, "allAsync").resolves(fx.labels);
 sinon.stub(labelClass.prototype, "createAsync", function(args) {
   return new bluebird.Promise(function(resolve, reject) {
     resolve(args);

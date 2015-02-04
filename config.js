@@ -6,6 +6,12 @@ var dotenv = require('dotenv');
 var bluebird = require('bluebird');
 var Travis = require('travis-ci');
 var kue = require('kue');
+var TrackerLabelService = require('pivotaltracker/lib/resources/label').Service;
+var TrackerLabelType = require('pivotaltracker/lib/resources/label').Label;
+var TrackerStoryService = require('pivotaltracker/lib/resources/story').Service;
+var TrackerStoryType = require('pivotaltracker/lib/resources/story').Story;
+var TrackerCommentService = require('pivotaltracker/lib/resources/comment').Service;
+var TrackerCommentType = require('pivotaltracker/lib/resources/comment').Comment;
 
 bluebird.longStackTraces();
 
@@ -51,9 +57,12 @@ bluebird.promisifyAll(github.misc);
 bluebird.promisifyAll(github.pullRequests);
 bluebird.promisifyAll(github.issues);
 bluebird.promisifyAll(github.statuses);
-bluebird.promisifyAll(Object.getPrototypeOf(pivotal.project(0).labels));
-bluebird.promisifyAll(Object.getPrototypeOf(pivotal.project(0).story(0)));
-bluebird.promisifyAll(Object.getPrototypeOf(pivotal.project(0).story(0).comments));
+bluebird.promisifyAll(TrackerLabelService.prototype);
+bluebird.promisifyAll(TrackerLabelType.prototype);
+bluebird.promisifyAll(TrackerStoryService.prototype);
+bluebird.promisifyAll(TrackerStoryType.prototype);
+bluebird.promisifyAll(TrackerCommentService.prototype);
+bluebird.promisifyAll(TrackerCommentType.prototype);
 bluebird.promisifyAll(redis);
 
 module.exports = {
