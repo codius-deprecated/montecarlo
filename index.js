@@ -16,6 +16,9 @@ queue.addReviewerFactory(function(r) {
 queue.addReviewerFactory(function(r) {
   return new reviewers.TrackerProcessor(r, project);
 });
+queue.addReviewerFactory(function(r) {
+  return new reviewers.WebuiStateProcessor(r, config.redis);
+});
 
 app.set('port', (process.env.PORT || 5000));
 app.set('view engine', 'jade');
@@ -24,14 +27,32 @@ app.use(bodyParser.json());
 
 app.get('/', function(req, res) {
   bluebird.join(
-    config.redis.smembersAsync("pull-requests").map(JSON.parse),
+    config.redis.smembersAsync("pull-requests").map(Number).then(function(ids) {
+      var p = [];
+      ids.forEach(function(id) {
+        p.push(config.redis.hgetallAsync('pr:'+id));
+      });
+      return bluebird.all(p);
+    }),
     config.redis.hgetAsync("crawl-state", "last-run"),
     config.redis.hgetAsync("crawl-state", "running"),
     bluebird.promisify(config.travis.repos('codius').get)(),
     bluebird.promisify(config.travis.repos('ripple').get)(),
     function(reqs, lastRun, isRunning, travisRepos, rippleRepos) {
+      var queue = {merged: [], open: [], closed: []};
+      reqs.forEach(function(r) {
+        if (r) {
+          if (r.state == "merged") {
+            queue.merged.push(r);
+          } else if (r.state == "open") {
+            queue.open.push(r);
+          } else if (r.state == "closed") {
+            queue.closed.push(r);
+          }
+        }
+      });
       res.render('index', {
-        queue: reqs,
+        queue: queue,
         lastRun: moment(lastRun).format('MMM Do YY, h:mm:ss a'),
         isRunning: isRunning,
         travis: travisRepos.repos.concat(rippleRepos.repos)

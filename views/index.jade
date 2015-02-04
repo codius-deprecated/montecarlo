@@ -2,21 +2,44 @@ doctype html
 html(lang="en")
   head
     link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.0/css/foundation.min.css")
+    link(rel="stylesheet", href="main.css")
     title Codius Pull Requests
   body
     div(class="row")
       div(class="medium-6 small-12 columns")
-        h1 Active pull requests
+        h1 Pull requests
         table
           tr
             th Repository
             th Number
-          each val in queue
+            th Last seen
+          tr
+            th(colspan=3) Open
+          each val in queue.open
             tr
               td
                 a(href="http://github.com/"+val.user+"/"+val.repo)= val.user+"/"+val.repo
               td
                 a(href="https://github.com/"+val.user+"/"+val.repo+"/pull/"+val.number)= val.number
+              td= val.lastSeen
+          tr
+            th(colspan=3) Merged
+          each val in queue.merged
+            tr
+              td
+                a(href="http://github.com/"+val.user+"/"+val.repo)= val.user+"/"+val.repo
+              td
+                a(href="https://github.com/"+val.user+"/"+val.repo+"/pull/"+val.number)= val.number
+              td= val.lastSeen
+          tr
+            th(colspan=3) Closed
+          each val in queue.closed
+            tr
+              td
+                a(href="http://github.com/"+val.user+"/"+val.repo)= val.user+"/"+val.repo
+              td
+                a(href="https://github.com/"+val.user+"/"+val.repo+"/pull/"+val.number)= val.number
+              td= val.lastSeen
         p= "Last run was "+lastRun
         p
           if isRunning
@@ -25,13 +48,16 @@ html(lang="en")
             span Crawler is idle.
       div(class="medium-6 small-12 columns")
         h1 Build Status
-        table
+        table(class="build-status")
           tr
             th Repository
             th Last Build
           each val in travis
             if val.last_build_id
-              tr
+              - var cls = "failed"
+              if val.last_build_state == "passed"
+                - var cls = "success"
+              tr(class=cls)
                 td
                   a(href="http://travis-ci.org/"+val.slug)= val.slug
                 td
