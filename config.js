@@ -5,6 +5,7 @@ var GitHubApi = require('github');
 var dotenv = require('dotenv');
 var bluebird = require('bluebird');
 var Travis = require('travis-ci');
+var kue = require('kue');
 
 bluebird.longStackTraces();
 
@@ -13,13 +14,23 @@ dotenv.load();
 var redisURL = url.parse(process.env.REDISCLOUD_URL);
 var redis = Redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
 
+var queueOptions = {
+  port: redisURL.port,
+  host: redisURL.hostname
+};
+
 var travis = new Travis({
   version: '2.0.0'
 });
 
 if (redisURL.auth) {
   redis.auth(redisURL.auth.split(":")[1]);
+  queueOptions.auth = redisURL.auth.split(":")[1];
 }
+
+var queue = kue.createQueue({
+  redis: queueOptions
+});
 
 var pivotal = new tracker.Client(process.env.TRACKER_TOKEN);
 
@@ -50,5 +61,6 @@ module.exports = {
   pivotal: pivotal,
   redis: redis,
   lgtmThreshold: 1,
-  travis: travis
+  travis: travis,
+  queue: queue
 }

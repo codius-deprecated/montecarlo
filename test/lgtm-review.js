@@ -12,6 +12,7 @@ var tracker = require('../lib/reviewers/tracker');
 var fx = require('node-fixtures');
 var labelClass = require('pivotaltracker/lib/resources/label').Service;
 var storyClass = require('pivotaltracker/lib/resources/story').Service;
+var PullRequestQueue = require('../lib/review-queue').PullRequestQueue;
 
 chai.use(chaiAsPromised);
 
@@ -115,4 +116,10 @@ it('marks an item as accepted when a PR is merged', function(done) {
   expect(proc.review(fx.pullRequests[1])).to.be.fulfilled.then(function() {
     expect(proc.markStoryAccepted.called).to.equal(true);
   }).then(done);
+});
+
+it('processes an item from the job queue without crashing', function(done) {
+  var queue = new PullRequestQueue(config.queue, config.github, config.pivotal.project(1));
+  queue.enqueuePullRequest('codius', 'codius-sandbox-core', 1);
+  expect(queue.processNextPullRequest()).to.notify(done);
 });

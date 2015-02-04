@@ -5,11 +5,10 @@ var app = express();
 var config = require('./config');
 var reviewer = require('./lib/reviewer');
 var bodyParser = require('body-parser');
+var PullRequestQueue = require('./lib/review-queue').PullRequestQueue;
 
-var reviewers = {
-  LGTMProcessor: require('./lib/reviewers/lgtm').LGTMProcessor,
-  TrackerProcessor: require('./lib/reviewers/tracker').TrackerProcessor
-};
+var project = config.pivotal.project(process.env.TRACKER_PROJECT_ID);
+var queue = new PullRequestQueue(config.queue, config.github, project);
 
 app.set('port', (process.env.PORT || 5000));
 app.set('view engine', 'jade');
@@ -38,62 +37,43 @@ config.redis.hset("crawl-state", "running", false);
 
 app.post('/github-hook', function(req, res) {
   var eventType = req.headers['x-github-event'];
-  var project = config.pivotal.project(process.env.TRACKER_PROJECT_ID);
   if (eventType == 'status') {
-    var r = new reviewer.PullRequestReviewer(
-      config.redis,
-      config.github,
+    queue.enqueuePullRequest(
       req.body.repository.owner.login,
-      req.body.repository.name
+      req.body.repository.name,
+      -1
     );
-    r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
-    r.addProcessor(new reviewers.TrackerProcessor(project, r));
-    r.reviewAll();
   } else if (eventType == 'issue_comment') {
-    var r = new reviewer.PullRequestReviewer(
-      config.redis,
-      config.github,
+    queue.enqueuePullRequest(
       req.body.repository.owner.login,
-      req.body.repository.name
+      req.body.repository.name,
+      req.body.issue.number
     );
-    r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
-    r.addProcessor(new reviewers.TrackerProcessor(project, r));
-    r.reviewOne(req.body.issue.number);
   } else if (eventType == 'pull_request') {
     if (req.body.action == "opened" || req.body.action == "reopened" || req.body.action == "closed") {
-      var r = new reviewer.PullRequestReviewer(
-        config.redis,
-        config.github,
+      queue.enqueuePullRequest(
         req.body.pull_request.base.repo.owner.login,
-        req.body.pull_request.base.repo.name
+        req.body.pull_request.base.repo.name,
+        req.body.pull_request.number
       );
-      r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
-      r.addProcessor(new reviewers.TrackerProcessor(project, r));
-      r.reviewOne(req.body.pull_request.number);
     }
     res.send("Handling pull request");
   } else if (eventType == 'push') {
-    var r = new reviewer.PullRequestReviewer(
-      config.redis,
-      config.github,
+    queue.enqueuePullRequest(
       req.body.repository.owner.login,
-      req.body.repository.name
+      req.body.repository.name,
+      -1
     );
-    r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
-    r.addProcessor(new reviewers.TrackerProcessor(project, r));
-    r.reviewAll();
-    res.send("Starting to handle push");
   } else {
     res.send("Unknown event: " + JSON.stringify(req.body));
   }
 });
 
 app.get('/crawl', function(req, res) {
-  var project = config.pivotal.project(process.env.TRACKER_PROJECT_ID);
-  return config.redis.smembersAsync("pull-requests").map(JSON.parse).then(function(reqs) {
+  return config.redis.smembersAsync("open-pull-requests").map(JSON.parse).then(function(reqs) {
     var p = [];
     reqs.forEach(function(req) {
-      var r = new reviewer.PullRequestReviewer(config.redis, config.github, req.repo, req.repo);
+      var r = new reviewer.PullRequestReviewer(config.redis, config.github, req.user, req.repo);
       r.addProcessor(new reviewers.LGTMProcessor(config.github, r, config.lgtmThreshold));
       r.addProcessor(new reviewers.TrackerProcessor(project, r));
       p.push(r.reviewOne(req.number));
