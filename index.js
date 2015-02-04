@@ -65,6 +65,8 @@ config.redis.hset("crawl-state", "running", false);
 
 app.post('/github-hook', function(req, res) {
   var eventType = req.headers['x-github-event'];
+  console.log("Handling github hook: %s", eventType);
+  console.log(req.body);
   if (eventType == 'status') {
     queue.enqueuePullRequest(
       req.body.repository.owner.login,
