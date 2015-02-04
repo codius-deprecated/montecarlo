@@ -95,7 +95,7 @@ it('merges a valid pull request', function(done) {
 it('extracts a set of tracker story IDs', function(done) {
   var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
   var proj = config.pivotal.project(0);
-  var proc = new tracker.TrackerProcessor(proj, r, 1);
+  var proc = new tracker.TrackerProcessor(r, proj);
   expect(proc.getTrackerStories(fx.pullRequests[0], 1)).to.be.fulfilled.then(function(v) {
     expect(v).to.deep.equal([1]);
   }).then(done);
@@ -104,7 +104,7 @@ it('extracts a set of tracker story IDs', function(done) {
 it('marks an item as delivered when a PR is created', function(done) {
   var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
   var proj = config.pivotal.project(1);
-  var proc = new tracker.TrackerProcessor(proj, r, 1);
+  var proc = new tracker.TrackerProcessor(r, proj);
   sinon.spy(proc, "markStoryDelivered");
   expect(proc.review(fx.pullRequests[0])).to.be.fulfilled.then(function() {
     expect(proc.markStoryDelivered.called).to.equal(true);
@@ -114,7 +114,7 @@ it('marks an item as delivered when a PR is created', function(done) {
 it('marks an item as accepted when a PR is merged', function(done) {
   var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
   var proj = config.pivotal.project(1);
-  var proc = new tracker.TrackerProcessor(proj, r, 1);
+  var proc = new tracker.TrackerProcessor(r, proj);
   sinon.spy(proc, "markStoryAccepted");
   expect(proc.review(fx.pullRequests[1])).to.be.fulfilled.then(function() {
     expect(proc.markStoryAccepted.called).to.equal(true);

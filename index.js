@@ -4,11 +4,18 @@ var express = require('express');
 var app = express();
 var config = require('./config');
 var reviewer = require('./lib/reviewer');
+var reviewers = require('./lib/reviewers');
 var bodyParser = require('body-parser');
 var PullRequestQueue = require('./lib/review-queue').PullRequestQueue;
 
 var project = config.pivotal.project(process.env.TRACKER_PROJECT_ID);
 var queue = new PullRequestQueue(config.queue, config.github, project);
+queue.addReviewerFactory(function(r) {
+  return new reviewers.LGTMProcessor(r, config.lgtmThreshold);
+});
+queue.addReviewerFactory(function(r) {
+  return new reviewers.TrackerProcessor(r, project);
+});
 
 app.set('port', (process.env.PORT || 5000));
 app.set('view engine', 'jade');
