@@ -69,7 +69,7 @@ it('processes a list of pull requests', function(done) {
 
 it('correctly confirms a successful build', function(done) {
   var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
-  var proc = new lgtm.LGTMProcessor(config.github, r, 1);
+  var proc = new lgtm.LGTMProcessor(r, 1);
   expect(proc.getBuildStatus(fx.pullRequests[0], 1)).to.be.fulfilled.then(function(v) {
     expect(v).to.equal(true);
   }).then(done);
@@ -77,7 +77,7 @@ it('correctly confirms a successful build', function(done) {
 
 it('correctly counts a number of LGTMs', function(done) {
   var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
-  var proc = new lgtm.LGTMProcessor(config.github, r, 1);
+  var proc = new lgtm.LGTMProcessor(r, 1);
   expect(proc.getLGTMs(fx.pullRequests[0], 1)).to.be.fulfilled.then(function(v) {
     expect(v.length).to.equal(3);
   }).then(done);
@@ -85,7 +85,7 @@ it('correctly counts a number of LGTMs', function(done) {
 
 it('merges a valid pull request', function(done) {
   var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
-  var proc = new lgtm.LGTMProcessor(config.github, r, 1);
+  var proc = new lgtm.LGTMProcessor(r, 1);
   sinon.spy(proc, "mergePR");
   expect(proc.review(fx.pullRequests[0])).to.be.fulfilled.then(function() {
     expect(proc.mergePR.called).to.equal(true);
