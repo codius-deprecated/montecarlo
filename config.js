@@ -23,17 +23,23 @@ var travis = new Travis({
   version: '2.0.0'
 });
 
-var redisURL = url.parse(process.env.REDISCLOUD_URL);
-var redis = Redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
+var redis = {};
+var queueOptions = {};
+if (process.env.REDISCLOUD_URL) {
+  var redisURL = url.parse(process.env.REDISCLOUD_URL);
+  redis = Redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
+  queueOptions = {
+    port: redisURL.port,
+    host: redisURL.hostname
+  };
 
-var queueOptions = {
-  port: redisURL.port,
-  host: redisURL.hostname
-};
-
-if (redisURL.auth) {
-  redis.auth(redisURL.auth.split(":")[1]);
-  queueOptions.auth = redisURL.auth.split(":")[1];
+  if (redisURL.auth) {
+    redis.auth(redisURL.auth.split(":")[1]);
+    queueOptions.auth = redisURL.auth.split(":")[1];
+  }
+} else {
+  redis = Redis.createClient();
+  queueOptions = {};
 }
 
 var queue = kue.createQueue({
