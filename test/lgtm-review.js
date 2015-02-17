@@ -107,27 +107,25 @@ it('extracts a set of tracker story IDs', function(done) {
   })).to.notify(done);
 });
 
-it('marks an item as delivered when a PR is created', function(done) {
+it('marks an item as in review when a PR is created', function(done) {
   var r = new reviewer.PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
   var proj = trackerClient.project(1);
   var proc = new tracker.TrackerProcessor(r, proj);
-  sinon.spy(proc, "markStoryDelivered");
+  sinon.spy(proc, "markStoryInReview");
   expect(expect(proc.review(fx.pullRequests[0])).to.be.fulfilled.then(function() {
-    expect(proc.markStoryDelivered.called).to.equal(true);
+    expect(proc.markStoryInReview.called).to.equal(true);
   })).to.notify(done);
 });
 
-it('marks an item as accepted when a PR is merged', function(done) {
+it('marks an item as delivered when a PR is merged', function(done) {
   var r = new reviewer.PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
   var proj = trackerClient.project(1);
   var proc = new tracker.TrackerProcessor(r, proj);
-  sinon.spy(proc, "markStoryAccepted");
   sinon.spy(proc, "markStoryDelivered");
   sinon.spy(proc, "updateTracker");
   expect(expect(proc.review(fx.pullRequests[1])).to.be.fulfilled.then(function() {
     expect(proc.updateTracker.called).to.equal(true);
-    expect(proc.markStoryDelivered.called).to.equal(false);
-    expect(proc.markStoryAccepted.called).to.equal(true);
+    expect(proc.markStoryDelivered.called).to.equal(true);
   })).to.notify(done);
 });
 
