@@ -11,7 +11,7 @@ html(lang="en")
         table
           tr
             th Repository
-            th Number
+            th Pull Request
             th Last seen
           tr
             th(colspan=3) Open
@@ -20,7 +20,7 @@ html(lang="en")
               td
                 a(href="http://github.com/"+val.user+"/"+val.repo)= val.user+"/"+val.repo
               td
-                a(href="https://github.com/"+val.user+"/"+val.repo+"/pull/"+val.number)= val.number
+                a(href="https://github.com/"+val.user+"/"+val.repo+"/pull/"+val.number)= val.number + " - " + val.title
               td= val.lastSeen
           tr
             th(colspan=3) Merged
@@ -29,7 +29,7 @@ html(lang="en")
               td
                 a(href="http://github.com/"+val.user+"/"+val.repo)= val.user+"/"+val.repo
               td
-                a(href="https://github.com/"+val.user+"/"+val.repo+"/pull/"+val.number)= val.number
+                a(href="https://github.com/"+val.user+"/"+val.repo+"/pull/"+val.number)= val.number + " - " + val.title
               td= val.lastSeen
           tr
             th(colspan=3) Closed
@@ -38,7 +38,7 @@ html(lang="en")
               td
                 a(href="http://github.com/"+val.user+"/"+val.repo)= val.user+"/"+val.repo
               td
-                a(href="https://github.com/"+val.user+"/"+val.repo+"/pull/"+val.number)= val.number
+                a(href="https://github.com/"+val.user+"/"+val.repo+"/pull/"+val.number)= val.number + " - " + val.title
               td= val.lastSeen
         p= "Last run was "+lastRun
         p
