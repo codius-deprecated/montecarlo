@@ -37,8 +37,7 @@ app.get('/', function(req, res) {
     config.redis.hgetAsync("crawl-state", "last-run"),
     config.redis.hgetAsync("crawl-state", "running"),
     bluebird.promisify(config.travis.repos('codius').get)(),
-    bluebird.promisify(config.travis.repos('ripple').get)(),
-    function(reqs, lastRun, isRunning, travisRepos, rippleRepos) {
+    function(reqs, lastRun, isRunning, travisRepos) {
       var queue = {merged: [], open: [], closed: []};
       reqs.forEach(function(r) {
         if (r) {
@@ -55,7 +54,7 @@ app.get('/', function(req, res) {
         queue: queue,
         lastRun: moment(lastRun).format('MMM Do YY, h:mm:ss a'),
         isRunning: isRunning,
-        travis: travisRepos.repos.concat(rippleRepos.repos)
+        travis: travisRepos.repos
       });
     }
   );
