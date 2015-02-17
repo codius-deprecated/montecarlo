@@ -1,4 +1,5 @@
-var config = require('../config');
+var trackerClient = require('../lib/tracker');
+var nconf = require('../lib/config');
 var reviewer = require('../lib/reviewer');
 var bluebird = require('bluebird');
 var chai = require('chai');
@@ -15,6 +16,10 @@ var storyClass = require('pivotaltracker/lib/resources/story').Service;
 var commentClass = require('pivotaltracker/lib/resources/comment').Service;
 var PullRequestQueue = require('../lib/review-queue').PullRequestQueue;
 
+var github = require('../lib/github');
+var redis = require('../lib/redis');
+var kue = require('../lib/kue');
+
 chai.use(chaiAsPromised);
 
 function singlePage(data, empty) {
@@ -29,16 +34,16 @@ function singlePage(data, empty) {
   }
 }
 
-sinon.stub(config.github.pullRequests, "mergeAsync").resolves([]);
-sinon.stub(config.redis, "hset", function(){});
-sinon.stub(config.redis, "hsetAsync").resolves([]);
-sinon.stub(config.redis, "sremAsync").resolves([]);
-sinon.stub(config.github.pullRequests, "getAllAsync", singlePage(fx.pullRequests, []));
-sinon.stub(config.github.pullRequests, "getCommitsAsync", singlePage(fx.commits, []));
-sinon.stub(config.github.pullRequests, "getMergedAsync").resolves(true);
-sinon.stub(config.github.statuses, "getCombinedAsync", singlePage(fx.statuses, {statuses: []}));
-sinon.stub(config.github.issues, "getCommentsAsync", singlePage(fx.comments, []));
-sinon.stub(config.github.issues, "createCommentAsync").resolves([]);
+sinon.stub(github.pullRequests, "mergeAsync").resolves([]);
+sinon.stub(redis, "hset", function(){});
+sinon.stub(redis, "hsetAsync").resolves([]);
+sinon.stub(redis, "sremAsync").resolves([]);
+sinon.stub(github.pullRequests, "getAllAsync", singlePage(fx.pullRequests, []));
+sinon.stub(github.pullRequests, "getCommitsAsync", singlePage(fx.commits, []));
+sinon.stub(github.pullRequests, "getMergedAsync").resolves(true);
+sinon.stub(github.statuses, "getCombinedAsync", singlePage(fx.statuses, {statuses: []}));
+sinon.stub(github.issues, "getCommentsAsync", singlePage(fx.comments, []));
+sinon.stub(github.issues, "createCommentAsync").resolves([]);
 sinon.stub(storyClass.prototype, "getAsync").resolves(fx.story);
 sinon.stub(storyClass.prototype, "updateAsync").resolves([]);
 sinon.stub(commentClass.prototype, "createAsync").resolves([]);
@@ -61,7 +66,7 @@ MockProcessor.prototype = {
 
 it('processes a list of pull requests', function(done) {
   var proc = new MockProcessor();
-  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
+  var r = new reviewer.PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
   r.addProcessor(proc);
   expect(expect(r.reviewAll()).to.be.fulfilled.then(function() {
     expect(proc.seen_ids).to.deep.equal([1, 2]);
@@ -69,7 +74,7 @@ it('processes a list of pull requests', function(done) {
 });
 
 it('correctly confirms a successful build', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
+  var r = new reviewer.PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
   var proc = new lgtm.LGTMProcessor(r, 1);
   expect(expect(proc.getBuildStatus(fx.pullRequests[0], 1)).to.be.fulfilled.then(function(v) {
     expect(v).to.equal(true);
@@ -77,7 +82,7 @@ it('correctly confirms a successful build', function(done) {
 });
 
 it('correctly counts a number of LGTMs', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
+  var r = new reviewer.PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
   var proc = new lgtm.LGTMProcessor(r, 1);
   expect(expect(proc.getCommands(fx.pullRequests[0], 1)).to.be.fulfilled.then(function(v) {
     expect(v.lgtm.length).to.equal(3);
@@ -85,7 +90,7 @@ it('correctly counts a number of LGTMs', function(done) {
 });
 
 it('merges a valid pull request', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
+  var r = new reviewer.PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
   var proc = new lgtm.LGTMProcessor(r, 1);
   sinon.spy(proc, "mergePR");
   expect(expect(proc.review(fx.pullRequests[0])).to.be.fulfilled.then(function() {
@@ -94,8 +99,8 @@ it('merges a valid pull request', function(done) {
 });
 
 it('extracts a set of tracker story IDs', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
-  var proj = config.pivotal.project(0);
+  var r = new reviewer.PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
+  var proj = trackerClient.project(0);
   var proc = new tracker.TrackerProcessor(r, proj);
   expect(expect(proc.getTrackerStories(fx.pullRequests[0], 1)).to.be.fulfilled.then(function(v) {
     expect(v).to.deep.equal([1]);
@@ -103,8 +108,8 @@ it('extracts a set of tracker story IDs', function(done) {
 });
 
 it('marks an item as delivered when a PR is created', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
-  var proj = config.pivotal.project(1);
+  var r = new reviewer.PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
+  var proj = trackerClient.project(1);
   var proc = new tracker.TrackerProcessor(r, proj);
   sinon.spy(proc, "markStoryDelivered");
   expect(expect(proc.review(fx.pullRequests[0])).to.be.fulfilled.then(function() {
@@ -113,8 +118,8 @@ it('marks an item as delivered when a PR is created', function(done) {
 });
 
 it('marks an item as accepted when a PR is merged', function(done) {
-  var r = new reviewer.PullRequestReviewer(config.github, 'codius', 'codius-sandbox-core');
-  var proj = config.pivotal.project(1);
+  var r = new reviewer.PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
+  var proj = trackerClient.project(1);
   var proc = new tracker.TrackerProcessor(r, proj);
   sinon.spy(proc, "markStoryAccepted");
   sinon.spy(proc, "markStoryDelivered");
@@ -127,7 +132,7 @@ it('marks an item as accepted when a PR is merged', function(done) {
 });
 
 it('processes an item from the job queue without crashing', function(done) {
-  var queue = new PullRequestQueue(config.queue, config.github, config.pivotal.project(1));
+  var queue = new PullRequestQueue(kue, github, trackerClient.project(1));
   queue.enqueuePullRequest('codius', 'codius-sandbox-core', 1);
   expect(queue.processNextPullRequest()).to.notify(done);
 });

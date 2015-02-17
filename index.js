@@ -2,22 +2,27 @@ var bluebird = require('bluebird');
 var moment = require('moment');
 var express = require('express');
 var app = express();
-var config = require('./config');
 var reviewer = require('./lib/reviewer');
 var reviewers = require('./lib/reviewers');
 var bodyParser = require('body-parser');
 var PullRequestQueue = require('./lib/review-queue').PullRequestQueue;
+var tracker = require('./lib/tracker');
+var kue = require('./lib/kue');
+var github = require('./lib/github');
+var nconf = require('./lib/config');
+var redis = require('./lib/redis');
+var travis = require('./lib/travis');
 
-var project = config.pivotal.project(process.env.TRACKER_PROJECT_ID);
-var queue = new PullRequestQueue(config.queue, config.github, project);
+var project = tracker.project(process.env.TRACKER_PROJECT_ID);
+var queue = new PullRequestQueue(kue, github, project);
 queue.addReviewerFactory(function(r) {
-  return new reviewers.LGTMProcessor(r, config.lgtmThreshold);
+  return new reviewers.LGTMProcessor(r, nconf.get('reviewers:lgtm:threshold'));
 });
 queue.addReviewerFactory(function(r) {
   return new reviewers.TrackerProcessor(r, project);
 });
 queue.addReviewerFactory(function(r) {
-  return new reviewers.WebuiStateProcessor(r, config.redis);
+  return new reviewers.WebuiStateProcessor(r, redis);
 });
 
 app.set('port', (process.env.PORT || 5000));
@@ -27,16 +32,16 @@ app.use(bodyParser.json());
 
 app.get('/', function(req, res) {
   bluebird.join(
-    config.redis.smembersAsync("pull-requests").map(Number).then(function(ids) {
+    redis.smembersAsync("pull-requests").map(Number).then(function(ids) {
       var p = [];
       ids.forEach(function(id) {
-        p.push(config.redis.hgetallAsync('pr:'+id));
+        p.push(redis.hgetallAsync('pr:'+id));
       });
       return bluebird.all(p);
     }),
-    config.redis.hgetAsync("crawl-state", "last-run"),
-    config.redis.hgetAsync("crawl-state", "running"),
-    bluebird.promisify(config.travis.repos('codius').get)(),
+    redis.hgetAsync("crawl-state", "last-run"),
+    redis.hgetAsync("crawl-state", "running"),
+    bluebird.promisify(travis.repos('codius').get)(),
     function(reqs, lastRun, isRunning, travisRepos) {
       var queue = {merged: [], open: [], closed: []};
       reqs.forEach(function(r) {
@@ -60,7 +65,7 @@ app.get('/', function(req, res) {
   );
 });
 
-config.redis.hset("crawl-state", "running", false);
+redis.hset("crawl-state", "running", false);
 
 app.post('/github-hook', function(req, res) {
   var eventType = req.headers['x-github-event'];
