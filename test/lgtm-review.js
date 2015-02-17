@@ -131,3 +131,9 @@ it('processes an item from the job queue without crashing', function(done) {
   queue.enqueuePullRequest('codius', 'codius-sandbox-core', 1);
   expect(queue.processNextPullRequest()).to.notify(done);
 });
+
+it('parses a bunch of commands', function(done) {
+  var proc = new lgtm.LGTMProcessor(null, 1);
+  expect(proc.parseCommands(fx.comments[4].body)).to.deep.equal([undefined, 'retry']);
+  done();
+});
