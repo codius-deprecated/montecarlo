@@ -18,6 +18,7 @@
     "kue": "^0.8.11",
     "moment": "^2.9.0",
     "nconf": "^0.7.1",
+    "node-redis-warlock": "^0.1.2",
     "pivotaltracker": "^0.1.1",
     "redis": "^0.12.1",
     "slack-client": "^1.2.2",
