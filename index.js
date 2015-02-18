@@ -104,11 +104,23 @@ app.post('/github-hook', function(req, res) {
 });
 
 app.get('/crawl', function(req, res) {
-  var repos = ['codius-sandbox', 'codius-sandbox-core', 'codius-engine', 'codius-host'];
-  repos.forEach(function(r) {
-    queue.enqueuePullRequest('codius', r, -1);
+  github.user.getTeamsAsync({}).then(function(teams) {
+    var p = [];
+    teams.forEach(function(team) {
+      p.push(github.orgs.getTeamReposAsync({
+        id: team.id
+      }).then(function(repos) {
+        var p = [];
+        repos.forEach(function(repo) {
+          p.push(queue.enqueuePullRequest(repo.owner.login, repo.name, -1));
+        });
+        return bluebird.all(p);
+      }));
+    });
+    return bluebird.all(p);
+  }).then(function() {
+    res.send("Running crawler on repos!");
   });
-  res.send("Running crawler!");
 });
 
 app.listen(app.get('port'), function() {
