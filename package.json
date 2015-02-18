@@ -21,6 +21,7 @@
     "node-redis-warlock": "^0.1.2",
     "pivotaltracker": "^0.1.1",
     "redis": "^0.12.1",
+    "shuffle-array": "^0.1.0",
     "slack-client": "^1.2.2",
     "string-template": "^0.2.0",
     "travis-ci": "^2.0.3"
