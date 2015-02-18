@@ -23,7 +23,16 @@ config.github.misc.rateLimitAsync({}).then(function(limits) {
   var min = 100;
   console.log("Only %d requests available. Limit resets in about %d minutes.", limits.resources.core.remaining, Math.ceil((limits.resources.core.reset - Math.floor(Date.now()/1000))/60));
   if (limits.resources.core.remaining > min) {
-    var repos = ['codius-engine', 'codius-host', 'codius-sandbox', 'codius-sandbox-core'];
+    var repos = [
+      'codius.org',
+      'codius-cli',
+      'codius-engine',
+      'codius-host',
+      'codius-lang-js',
+      'codius-node-sandbox',
+      'codius-sandbox',
+      'codius-sandbox-core'
+    ];
     var p = [];
     config.redis.hset("crawl-state", "running", true);
     repos.forEach(function(repoName) {
