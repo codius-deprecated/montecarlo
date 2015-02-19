@@ -44,6 +44,7 @@ sinon.stub(github.pullRequests, "getMergedAsync").resolves(true);
 sinon.stub(github.statuses, "getCombinedAsync", singlePage(fx.statuses, {statuses: []}));
 sinon.stub(github.issues, "getCommentsAsync", singlePage(fx.comments, []));
 sinon.stub(github.issues, "createCommentAsync").resolves([]);
+sinon.stub(github.issues, "getRepoIssueAsync").resolves({body: '+r'});
 sinon.stub(storyClass.prototype, "getAsync").resolves(fx.story);
 sinon.stub(storyClass.prototype, "updateAsync").resolves([]);
 sinon.stub(commentClass.prototype, "createAsync").resolves([]);
@@ -137,6 +138,6 @@ it('processes an item from the job queue without crashing', function(done) {
 
 it('parses a bunch of commands', function(done) {
   var proc = new lgtm.LGTMProcessor(null, 1);
-  expect(proc.parseCommands(fx.comments[4].body)).to.deep.equal([undefined, 'retry']);
+  expect(proc.parseCommands(fx.comments[4].body)).to.deep.equal([[], ['retry']]);
   done();
 });
