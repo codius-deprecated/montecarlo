@@ -52,13 +52,12 @@ html(lang="en")
           tr
             th Repository
             th Last Build
-          each val in travis
-            if val.last_build_id
-              - var cls = "failed"
-              if val.last_build_state == "passed"
-                - var cls = "success"
-              tr(class=cls)
-                td
-                  a(href="http://travis-ci.org/"+val.slug)= val.slug
-                td
-                  a(href="http://travis-ci.org/"+val.slug+"/builds/"+val.last_build_id)= val.last_build_number + ": "+val.last_build_state
+          each val in buildStatus
+            - var cls = "failed"
+            if val.state == "success"
+              - var cls = "success"
+            tr(class=cls)
+              td
+                a(href=val.project_url)= val.slug
+              td
+                a(href=val.build_url)= val.state

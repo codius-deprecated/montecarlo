@@ -12,6 +12,7 @@ var github = require('./lib/github');
 var nconf = require('./lib/config');
 var redis = require('./lib/redis');
 var travis = require('./lib/travis');
+var circleci = require('./lib/circleci');
 
 var project = tracker.project(process.env.TRACKER_PROJECT_ID);
 var queue = new PullRequestQueue(kue, github, project);
@@ -41,8 +42,28 @@ app.get('/', function(req, res) {
     }),
     redis.hgetAsync("crawl-state", "last-run"),
     redis.hgetAsync("crawl-state", "running"),
-    bluebird.promisify(travis.repos('codius').get)(),
-    function(reqs, lastRun, isRunning, travisRepos) {
+    circleci.getProjects(),
+    function(reqs, lastRun, isRunning, circleProjects) {
+      var buildStatus = [];
+      circleProjects.forEach(function(r) {
+        if (r.vcs_url.indexOf('/codius/') != -1) {
+          console.log(r.branches.master.recent_builds);
+          var build;
+          if (r.branches.integration) {
+            build = r.branches.integration.recent_builds[0];
+          } else if (r.branches.develop) {
+            build = r.branches.develop.recent_builds[0];
+          } else {
+            build = r.branches.master.recent_builds[0];
+          }
+          buildStatus.push({
+            slug: 'codius/'+r.reponame,
+            project_url: 'https://circleci.com/gh/codius/'+r.reponame,
+            build_url: 'https://circleci.com/gh/codius/'+r.reponame+'/'+build.build_num,
+            state: build.outcome
+          });
+        }
+      });
       var queue = {merged: [], open: [], closed: []};
       reqs.forEach(function(r) {
         if (r) {
@@ -59,13 +80,11 @@ app.get('/', function(req, res) {
         queue: queue,
         lastRun: moment(lastRun).format('MMM Do YY, h:mm:ss a'),
         isRunning: isRunning,
-        travis: travisRepos.repos
+        buildStatus: buildStatus
       });
     }
   );
 });
-
-redis.hset("crawl-state", "running", false);
 
 app.post('/github-hook', function(req, res) {
   var eventType = req.headers['x-github-event'];
