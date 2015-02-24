@@ -96,12 +96,14 @@ app.post('/github-hook', function(req, res) {
       req.body.repository.name,
       -1
     );
+    res.send("Reviewing");
   } else if (eventType == 'issue_comment') {
     queue.enqueuePullRequest(
       req.body.repository.owner.login,
       req.body.repository.name,
       req.body.issue.number
     );
+    res.send("Reviewing");
   } else if (eventType == 'pull_request') {
     if (req.body.action == "opened" || req.body.action == "reopened" || req.body.action == "closed") {
       queue.enqueuePullRequest(
@@ -117,6 +119,7 @@ app.post('/github-hook', function(req, res) {
       req.body.repository.name,
       -1
     );
+    res.send("Reviewing");
   } else {
     res.send("Unknown event: " + JSON.stringify(req.body));
   }
