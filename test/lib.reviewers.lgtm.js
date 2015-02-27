@@ -5,12 +5,15 @@ bluebird.longStackTraces();
 var replay = require('replay');
 var expect = require('chai').expect;
 var lgtm = require('../lib/reviewers/lgtm');
+var github = require('../lib/github');
+var PullRequestReviewer = require('../lib/reviewer').PullRequestReviewer;
 
 describe('LGTMReviewer', function() {
-  var proc;
+  var proc, reviewer;
 
   beforeEach(function() {
-    proc = new lgtm.LGTMProcessor(null, 1);
+    reviewer = new PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
+    proc = new lgtm.LGTMProcessor(reviewer, 1);
   });
 
   describe('#parseCommands', function() {
@@ -33,6 +36,27 @@ describe('LGTMReviewer', function() {
     it('extracts multiple complicated commands', function() {
       expect(proc.parseCommands('+r\nFOOBAR\n+r retry\n+r retry again')).to.deep.equal([[], ['retry'], ['retry', 'again']]);
     });
+  });
+
+  describe('#getBuildStatus', function() {
+    it('correctly confirms a successful build without any statuses', function() {
+      return reviewer.getPullRequest(1).then(function(pr) {
+        return expect(proc.getBuildStatus(pr)).to.eventually.equal(true);
+      });
+    });
+
+    it('correctly confirms a successful build', function() {
+      return reviewer.getPullRequest(5).then(function(pr) {
+        return expect(proc.getBuildStatus(pr)).to.eventually.equal(true);
+      });
+    });
+
+    it('correctly confirms an unsuccessful build', function() {
+      return reviewer.getPullRequest(3).then(function(pr) {
+        return expect(proc.getBuildStatus(pr)).to.eventually.equal(true);
+      });
+    });
+
   });
 });
 

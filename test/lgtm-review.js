@@ -72,14 +72,6 @@ it('processes a list of pull requests', function(done) {
   })).to.notify(done);
 });
 
-it('correctly confirms a successful build', function(done) {
-  var r = new reviewer.PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
-  var proc = new lgtm.LGTMProcessor(r, 1);
-  expect(expect(proc.getBuildStatus(fx.pullRequests[0], 1)).to.be.fulfilled.then(function(v) {
-    expect(v).to.equal(true);
-  })).to.notify(done);
-});
-
 it('correctly counts a number of LGTMs', function(done) {
   var r = new reviewer.PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
   var proc = new lgtm.LGTMProcessor(r, 1);
