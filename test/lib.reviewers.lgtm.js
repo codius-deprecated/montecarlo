@@ -4,12 +4,19 @@ bluebird.longStackTraces();
 
 var replay = require('replay');
 var expect = require('chai').expect;
+var sinon = require('sinon');
+var sinonAsPromised = require('sinon-as-promised')(bluebird.Promise);
 var lgtm = require('../lib/reviewers/lgtm');
 var github = require('../lib/github');
 var PullRequestReviewer = require('../lib/reviewer').PullRequestReviewer;
 
 describe('LGTMReviewer', function() {
   var proc, reviewer;
+
+  before(function() {
+    sinon.stub(github.pullRequests, "mergeAsync").resolves([]);
+    sinon.stub(github.issues, "createCommentAsync").resolves([]);
+  });
 
   beforeEach(function() {
     reviewer = new PullRequestReviewer(github, 'codius', 'codius-sandbox');
@@ -100,6 +107,39 @@ describe('LGTMReviewer', function() {
       });
     });
 
+  });
+
+  describe('#review', function() {
+    beforeEach(function() {
+      reviewer = new PullRequestReviewer(github, 'codius', 'codius-host');
+      proc = new lgtm.LGTMProcessor(reviewer, 1);
+      sinon.spy(proc, "mergePR");
+    });
+
+    it('merges a valid pull request', function() {
+      return reviewer.getPullRequest(43).then(function(pr) {
+        pr.state = "open";
+        return expect(proc.review(pr)).to.be.fulfilled.then(function() {
+          expect(proc.mergePR.called).to.equal(true);
+        });
+      });
+    });
+
+    it('doesnt merge a closed pull request', function() {
+      return reviewer.getPullRequest(19).then(function(pr) {
+        return expect(proc.review(pr)).to.be.fulfilled.then(function() {
+          expect(proc.mergePR.called).to.equal(false);
+        });
+      });
+    });
+
+    it('doesnt merge a previously merged pull request', function() {
+      return reviewer.getPullRequest(43).then(function(pr) {
+        return expect(proc.review(pr)).to.be.fulfilled.then(function() {
+          expect(proc.mergePR.called).to.equal(false);
+        });
+      });
+    });
   });
 });
 

@@ -1,0 +1,30 @@
+GET /repos/codius/codius-host/issues/19
+host: api.github.com
+accept: application/vnd.github.v3+json
+
+200 HTTP/1.1
+server: GitHub.com
+date: Fri, 27 Feb 2015 21:34:55 GMT
+content-type: application/json; charset=utf-8
+content-length: 2700
+status: 200 OK
+x-ratelimit-limit: 60
+x-ratelimit-remaining: 36
+x-ratelimit-reset: 1425073929
+cache-control: public, max-age=60, s-maxage=60
+last-modified: Fri, 27 Feb 2015 18:28:07 GMT
+etag: "f20bded9fe4e2ca3cac5a1b338f74c54"
+vary: Accept
+x-github-media-type: github.v3; format=json
+x-xss-protection: 1; mode=block
+x-frame-options: deny
+content-security-policy: default-src 'none'
+access-control-allow-credentials: true
+access-control-expose-headers: ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+access-control-allow-origin: *
+x-github-request-id: CE5004BE:0FED:5710EB1:54F0E2FF
+strict-transport-security: max-age=31536000; includeSubdomains; preload
+x-content-type-options: nosniff
+x-served-by: a241e1a8264a6ace03db946c85b92db3
+
+{"url":"https://api.github.com/repos/codius/codius-host/issues/19","labels_url":"https://api.github.com/repos/codius/codius-host/issues/19/labels{/name}","comments_url":"https://api.github.com/repos/codius/codius-host/issues/19/comments","events_url":"https://api.github.com/repos/codius/codius-host/issues/19/events","html_url":"https://github.com/codius/codius-host/pull/19","id":55837568,"number":19,"title":"Enable travis notifications","user":{"login":"tdfischer","id":15848,"avatar_url":"https://avatars.githubusercontent.com/u/15848?v=3","gravatar_id":"","url":"https://api.github.com/users/tdfischer","html_url":"https://github.com/tdfischer","followers_url":"https://api.github.com/users/tdfischer/followers","following_url":"https://api.github.com/users/tdfischer/following{/other_user}","gists_url":"https://api.github.com/users/tdfischer/gists{/gist_id}","starred_url":"https://api.github.com/users/tdfischer/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/tdfischer/subscriptions","organizations_url":"https://api.github.com/users/tdfischer/orgs","repos_url":"https://api.github.com/users/tdfischer/repos","events_url":"https://api.github.com/users/tdfischer/events{/privacy}","received_events_url":"https://api.github.com/users/tdfischer/received_events","type":"User","site_admin":false},"labels":[],"state":"closed","locked":false,"assignee":null,"milestone":null,"comments":1,"created_at":"2015-01-29T00:22:42Z","updated_at":"2015-01-29T00:25:17Z","closed_at":"2015-01-29T00:25:17Z","pull_request":{"url":"https://api.github.com/repos/codius/codius-host/pulls/19","html_url":"https://github.com/codius/codius-host/pull/19","diff_url":"https://github.com/codius/codius-host/pull/19.diff","patch_url":"https://github.com/codius/codius-host/pull/19.patch"},"body":"","closed_by":{"login":"tdfischer","id":15848,"avatar_url":"https://avatars.githubusercontent.com/u/15848?v=3","gravatar_id":"","url":"https://api.github.com/users/tdfischer","html_url":"https://github.com/tdfischer","followers_url":"https://api.github.com/users/tdfischer/followers","following_url":"https://api.github.com/users/tdfischer/following{/other_user}","gists_url":"https://api.github.com/users/tdfischer/gists{/gist_id}","starred_url":"https://api.github.com/users/tdfischer/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/tdfischer/subscriptions","organizations_url":"https://api.github.com/users/tdfischer/orgs","repos_url":"https://api.github.com/users/tdfischer/repos","events_url":"https://api.github.com/users/tdfischer/events{/privacy}","received_events_url":"https://api.github.com/users/tdfischer/received_events","type":"User","site_admin":false}}

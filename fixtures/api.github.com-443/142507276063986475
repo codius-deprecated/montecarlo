@@ -1,0 +1,27 @@
+POST /repos/codius/codius-host/issues/43/comments
+host: api.github.com
+content-type: application/json; charset=utf-8
+accept: application/vnd.github.v3+json
+body: {\"body\":\"The build is good and I\'m seeing 1 +1s from the following folks:\\n\\n* tdfischer\\n\\nAs such, I\'ll attempt to merge and close this pull request.\"}\n
+
+404 HTTP/1.1
+server: GitHub.com
+date: Fri, 27 Feb 2015 21:32:40 GMT
+content-type: application/json; charset=utf-8
+content-length: 77
+status: 404 Not Found
+x-ratelimit-limit: 60
+x-ratelimit-remaining: 40
+x-ratelimit-reset: 1425073929
+x-github-media-type: github.v3; format=json
+x-xss-protection: 1; mode=block
+x-frame-options: deny
+content-security-policy: default-src 'none'
+access-control-allow-credentials: true
+access-control-expose-headers: ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+access-control-allow-origin: *
+x-github-request-id: CE5004BE:10F0:54F9DCA:54F0E278
+strict-transport-security: max-age=31536000; includeSubdomains; preload
+x-content-type-options: nosniff
+
+{"message":"Not Found","documentation_url":"https://developer.github.com/v3"}
