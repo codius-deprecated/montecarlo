@@ -4,9 +4,13 @@ bluebird.longStackTraces();
 
 var replay = require('replay');
 var PullRequestQueue = require('../lib/review-queue').PullRequestQueue;
-var expect = require('chai').expect;
+var chai = require('chai');
+var chaiAsPromised = require('chai-as-promised');
 var kue = require('../lib/kue');
 var github = require('../lib/github');
+
+var expect = chai.expect;
+chai.use(chaiAsPromised);
 
 describe('PullRequestQueue', function() {
   var seenRequests = [];

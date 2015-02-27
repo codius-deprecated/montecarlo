@@ -59,10 +59,9 @@ describe('LGTMReviewer', function() {
 
     it('correctly confirms an unsuccessful build', function() {
       return reviewer.getPullRequest(3).then(function(pr) {
-        return expect(proc.getBuildStatus(pr)).to.eventually.equal(true);
+        return expect(proc.getBuildStatus(pr)).to.eventually.equal(false);
       });
     });
-
   });
 });
 
