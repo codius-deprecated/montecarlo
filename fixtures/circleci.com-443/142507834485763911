@@ -1,0 +1,18 @@
+GET /api/v1/projects?circle-token=foo
+host: circleci.com
+accept: application/json
+
+401 HTTP/1.1
+access-control-allow-origin: *
+content-type: application/json; charset=utf-8
+date: Fri, 27 Feb 2015 23:05:44 GMT
+server: nginx
+set-cookie: ring-session=C7N4sq4K8vvCqpZcSqoQcpYEfc5nZjWLkUvhZv8u4ekywbGPr%2Bx8uVyuGEUb9h%2BzE0TODRpWsB1fR%2BWsLCiHaXYl11s1H5UHyX%2F0Nz7YsRVkcKr8I67xob%2BMdYIUnd1MuB4IBj8RbjkBAe43Ie3EaDErV107ErlhLGXv8XH9b7VPYpp%2FkWW5W%2FQ7BMVj8S6X%2FnUezOrY9ZjQGkWD%2FysZe3GZK%2B6xI8m52OpuSXCelfc%3D--rAapMe5Q51B997%2BY359SoKzbdbmpe2%2BEaqG1pXSb0o4%3D;Secure;Max-Age=31536000;Expires=Sat, 27 Feb 2016 22:26:06 +0000;HttpOnly;Path=/
+set-cookie: ab_test_user_seed=0.7092268493609521;Expires=Sat, 27 Feb 2016 23:05:44 +0000;Path=/;Secure
+x-circleci-identity: i-5ff299a5
+x-frame-options: DENY
+x-route: /api/v1/projects
+content-length: 36
+connection: keep-alive
+
+{"message":"You must log in first."}
