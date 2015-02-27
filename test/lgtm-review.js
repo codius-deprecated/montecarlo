@@ -14,7 +14,6 @@ var fx = require('node-fixtures');
 var labelClass = require('pivotaltracker/lib/resources/label').Service;
 var storyClass = require('pivotaltracker/lib/resources/story').Service;
 var commentClass = require('pivotaltracker/lib/resources/comment').Service;
-var PullRequestQueue = require('../lib/review-queue').PullRequestQueue;
 
 var github = require('../lib/github');
 var redis = require('../lib/redis');
@@ -128,12 +127,6 @@ it('marks an item as delivered when a PR is merged', function(done) {
     expect(proc.updateTracker.called).to.equal(true);
     expect(proc.markStoryDelivered.called).to.equal(true);
   })).to.notify(done);
-});
-
-it('processes an item from the job queue without crashing', function(done) {
-  var queue = new PullRequestQueue(kue, github, trackerClient.project(1));
-  queue.enqueuePullRequest('codius', 'codius-sandbox-core', 1);
-  expect(queue.processNextPullRequest()).to.notify(done);
 });
 
 it('parses a bunch of commands', function(done) {
