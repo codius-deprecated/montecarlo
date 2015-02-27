@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 var sinon = require('sinon');
 var sinonAsPromised = require('sinon-as-promised');
 var circle = require('../lib/circleci');
-var app = require('../app');
+var app = require('../app').app;
 var github = require('../lib/github');
 
 describe('webui', function() {
