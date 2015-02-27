@@ -8,7 +8,6 @@ var expect = chai.expect;
 var replay = require('replay');
 var sinon = require('sinon');
 var sinonAsPromised = require('sinon-as-promised')(bluebird.Promise);
-var lgtm = require('../lib/reviewers/lgtm');
 var tracker = require('../lib/reviewers/tracker');
 var fx = require('node-fixtures');
 var labelClass = require('pivotaltracker/lib/resources/label').Service;
@@ -129,8 +128,3 @@ it('marks an item as delivered when a PR is merged', function(done) {
   })).to.notify(done);
 });
 
-it('parses a bunch of commands', function(done) {
-  var proc = new lgtm.LGTMProcessor(null, 1);
-  expect(proc.parseCommands(fx.comments[4].body)).to.deep.equal([[], ['retry']]);
-  done();
-});
