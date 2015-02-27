@@ -63,5 +63,43 @@ describe('LGTMReviewer', function() {
       });
     });
   });
+
+  describe('#getCommands', function() {
+    var reviewer, proc;
+
+    beforeEach(function() {
+      reviewer = new PullRequestReviewer(github, 'codius', 'codius-host');
+      proc = new lgtm.LGTMProcessor(reviewer, 1);
+    });
+
+    it('finds no lgtms or commands', function() {
+      return reviewer.getPullRequest(1).then(function(pr) {
+        return expect(proc.getCommands(pr, 1)).to.be.fulfilled.then(function(meta) {
+          expect(meta.commands).to.deep.equal([]);
+          expect(meta.lgtm.length).to.equal(0);
+        });
+      });
+    });
+
+    it('finds one lgtm and no commands', function() {
+      return reviewer.getPullRequest(3).then(function(pr) {
+        return expect(proc.getCommands(pr, 1)).to.be.fulfilled.then(function(meta) {
+          expect(meta.commands).to.deep.equal([]);
+          expect(meta.lgtm.length).to.equal(1);
+        });
+      });
+    });
+
+    it('finds lgtms and commands', function() {
+      return reviewer.getPullRequest(43).then(function(pr) {
+        return expect(proc.getCommands(pr, 1)).to.be.fulfilled.then(function(meta) {
+          expect(meta.commands.length).to.equal(1);
+          expect(meta.commands[0].command).to.deep.equal([]);
+          expect(meta.lgtm.length).to.equal(1);
+        });
+      });
+    });
+
+  });
 });
 

@@ -1,0 +1,29 @@
+GET /repos/codius/codius-sandbox/issues/1/comments?page=1&per_page=100
+host: api.github.com
+accept: application/vnd.github.v3+json
+
+200 HTTP/1.1
+server: GitHub.com
+date: Fri, 27 Feb 2015 21:06:30 GMT
+content-type: application/json; charset=utf-8
+content-length: 1254
+status: 200 OK
+x-ratelimit-limit: 60
+x-ratelimit-remaining: 57
+x-ratelimit-reset: 1425073929
+cache-control: public, max-age=60, s-maxage=60
+etag: "e3487cd501cdd99732cc3c04812139d5"
+vary: Accept
+x-github-media-type: github.v3; format=json
+x-xss-protection: 1; mode=block
+x-frame-options: deny
+content-security-policy: default-src 'none'
+access-control-allow-credentials: true
+access-control-expose-headers: ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+access-control-allow-origin: *
+x-github-request-id: CE5004BE:12AB:26A53753:54F0DC56
+strict-transport-security: max-age=31536000; includeSubdomains; preload
+x-content-type-options: nosniff
+x-served-by: a30e6f9aa7cf5731b87dfb3b9992202d
+
+[{"url":"https://api.github.com/repos/codius/codius-sandbox/issues/comments/60676393","html_url":"https://github.com/codius/codius-sandbox/pull/1#issuecomment-60676393","issue_url":"https://api.github.com/repos/codius/codius-sandbox/issues/1","id":60676393,"user":{"login":"wilsonianb","id":5885521,"avatar_url":"https://avatars.githubusercontent.com/u/5885521?v=3","gravatar_id":"","url":"https://api.github.com/users/wilsonianb","html_url":"https://github.com/wilsonianb","followers_url":"https://api.github.com/users/wilsonianb/followers","following_url":"https://api.github.com/users/wilsonianb/following{/other_user}","gists_url":"https://api.github.com/users/wilsonianb/gists{/gist_id}","starred_url":"https://api.github.com/users/wilsonianb/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/wilsonianb/subscriptions","organizations_url":"https://api.github.com/users/wilsonianb/orgs","repos_url":"https://api.github.com/users/wilsonianb/repos","events_url":"https://api.github.com/users/wilsonianb/events{/privacy}","received_events_url":"https://api.github.com/users/wilsonianb/received_events","type":"User","site_admin":false},"created_at":"2014-10-27T21:55:20Z","updated_at":"2014-10-27T21:55:20Z","body":"LGTM :+1: "}]

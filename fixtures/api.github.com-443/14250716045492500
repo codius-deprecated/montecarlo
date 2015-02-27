@@ -1,0 +1,29 @@
+GET /repos/codius/codius-host/issues/1/comments?page=1&per_page=100
+host: api.github.com
+accept: application/vnd.github.v3+json
+
+200 HTTP/1.1
+server: GitHub.com
+date: Fri, 27 Feb 2015 21:13:24 GMT
+content-type: application/json; charset=utf-8
+content-length: 2
+status: 200 OK
+x-ratelimit-limit: 60
+x-ratelimit-remaining: 50
+x-ratelimit-reset: 1425073929
+cache-control: public, max-age=60, s-maxage=60
+etag: "aacc6f617e4d9cd3fbca87b8d3748d98"
+vary: Accept
+x-github-media-type: github.v3; format=json
+x-xss-protection: 1; mode=block
+x-frame-options: deny
+content-security-policy: default-src 'none'
+access-control-allow-credentials: true
+access-control-expose-headers: ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+access-control-allow-origin: *
+x-github-request-id: CE5004BE:11B3:A7AE47F:54F0DDF4
+strict-transport-security: max-age=31536000; includeSubdomains; preload
+x-content-type-options: nosniff
+x-served-by: a241e1a8264a6ace03db946c85b92db3
+
+[]
