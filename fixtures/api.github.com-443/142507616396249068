@@ -1,0 +1,24 @@
+GET /repos/codius/codius-host/pulls/38/merge
+host: api.github.com
+accept: application/vnd.github.v3+json
+
+204 HTTP/1.1
+server: GitHub.com
+date: Fri, 27 Feb 2015 22:29:23 GMT
+status: 204 No Content
+x-ratelimit-limit: 60
+x-ratelimit-remaining: 48
+x-ratelimit-reset: 1425078221
+x-github-media-type: github.v3; format=json
+x-xss-protection: 1; mode=block
+x-frame-options: deny
+content-security-policy: default-src 'none'
+access-control-allow-credentials: true
+access-control-expose-headers: ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+access-control-allow-origin: *
+x-github-request-id: CE5004BE:0FF3:1E04110B:54F0EFC3
+strict-transport-security: max-age=31536000; includeSubdomains; preload
+x-content-type-options: nosniff
+vary: Accept-Encoding
+x-served-by: b0ef53392caa42315c6206737946d931
+

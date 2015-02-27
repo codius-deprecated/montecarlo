@@ -1,0 +1,18 @@
+GET /services/v5/projects/1/labels?envelope=true
+host: www.pivotaltracker.com
+content-type: application/json
+
+403 HTTP/1.1
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+status: 403 Forbidden
+x-ua-compatible: IE=Edge,chrome=1
+cache-control: no-cache
+x-request-id: 7b6ed355ea4cad0a982399d436c784e3
+x-runtime: 0.029581
+date: Fri, 27 Feb 2015 22:22:31 GMT
+x-rack-cache: miss
+x-powered-by: Phusion Passenger 4.0.41
+server: nginx/1.6.0 + Phusion Passenger 4.0.41
+
+{"http_status":"403","data":{"code":"unauthorized_operation","kind":"error","error":"Authorization failure.","general_problem":"You aren't authorized to access the requested resource.","possible_fix":"Your project permissions are determined on the Project Membership page. If you are receiving this error you may be trying to access the wrong project, or the project API access is disabled, or someone listed as the project's Owner needs to change your membership type."}}
