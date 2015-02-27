@@ -1,9 +1,7 @@
-var app = require('./app');
+var monty = require('./app');
 
-app.listen(app.get('port'), function() {
+monty.app.listen(app.get('port'), function() {
   console.log('Dashboard is running at localhost:' + app.get('port'));
 });
 
-queue.processNextPullRequest().then(queue.processNextPullRequest.bind(queue));
-
-
+monty.queue.processNextPullRequest().then(monty.queue.processNextPullRequest.bind(monty.queue));

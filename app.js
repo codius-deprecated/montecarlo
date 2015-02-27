@@ -145,4 +145,7 @@ app.get('/crawl', function(req, res) {
   });
 });
 
-module.exports = app;
+module.exports = {
+  app: app,
+  queue: queue
+};
