@@ -12,7 +12,7 @@ describe('LGTMReviewer', function() {
   var proc, reviewer;
 
   beforeEach(function() {
-    reviewer = new PullRequestReviewer(github, 'codius', 'codius-sandbox-core');
+    reviewer = new PullRequestReviewer(github, 'codius', 'codius-sandbox');
     proc = new lgtm.LGTMProcessor(reviewer, 1);
   });
 
@@ -47,6 +47,12 @@ describe('LGTMReviewer', function() {
 
     it('correctly confirms a successful build', function() {
       return reviewer.getPullRequest(5).then(function(pr) {
+        return expect(proc.getBuildStatus(pr)).to.eventually.equal(true);
+      });
+    });
+
+    it('correctly confirms a successful build after a set of fails', function() {
+      return reviewer.getPullRequest(12).then(function(pr) {
         return expect(proc.getBuildStatus(pr)).to.eventually.equal(true);
       });
     });
