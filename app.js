@@ -15,7 +15,7 @@ var travis = require('./lib/travis');
 var circleci = require('./lib/circleci');
 
 var project = tracker.project(process.env.TRACKER_PROJECT_ID);
-var queue = new PullRequestQueue(kue, github, project, redis);
+var queue = new PullRequestQueue(kue, github, redis);
 queue.addReviewerFactory(function(r) {
   return new reviewers.LGTMProcessor(r, nconf.get('reviewers:lgtm:threshold'));
 });
