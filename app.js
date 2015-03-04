@@ -137,11 +137,17 @@ app.get('/crawl', function(req, res) {
   github.user.getTeamsAsync({}).then(function(teams) {
     var p = [];
     teams.forEach(function(team) {
+      console.log("Looking for all repos in team %s/%s",
+          team.organization.login,
+          team.name);
       p.push(github.orgs.getTeamReposAsync({
         id: team.id
       }).then(function(repos) {
         var p = [];
         repos.forEach(function(repo) {
+          console.log("Crawling all pull requests in %s/%s",
+              repo.owner.login,
+              repo.name);
           p.push(queue.enqueuePullRequest(repo.owner.login, repo.name, -1));
         });
         return bluebird.all(p);
