@@ -9,6 +9,7 @@ function proc() {
 }
 
 proc().catch(function(err) {
-  console.exception("Error while processing review queue:", err);
+  console.log("Error while processing review queue:");
+  console.log(err);
   proc();
 });
