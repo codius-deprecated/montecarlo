@@ -15,15 +15,15 @@ var travis = require('./lib/travis');
 var circleci = require('./lib/circleci');
 
 var project = tracker.project(process.env.TRACKER_PROJECT_ID);
-var queue = new PullRequestQueue(kue, github, project);
+var queue = new PullRequestQueue(kue, github, project, redis);
 queue.addReviewerFactory(function(r) {
-  return new reviewers.LGTMProcessor(r, nconf.get('reviewers:lgtm:threshold'), redis);
+  return new reviewers.LGTMProcessor(r, nconf.get('reviewers:lgtm:threshold'));
 });
 queue.addReviewerFactory(function(r) {
   return new reviewers.TrackerProcessor(r, project);
 });
 queue.addReviewerFactory(function(r) {
-  return new reviewers.WebuiStateProcessor(r, redis);
+  return new reviewers.WebuiStateProcessor(r);
 });
 
 app.set('port', (process.env.PORT || 5000));

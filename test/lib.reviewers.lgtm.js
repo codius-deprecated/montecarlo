@@ -112,7 +112,8 @@ describe('LGTMReviewer', function() {
   describe('#review', function() {
     beforeEach(function() {
       reviewer = new PullRequestReviewer(github, 'codius', 'codius-host');
-      proc = new lgtm.LGTMProcessor(reviewer, 1);
+      sinon.stub(reviewer, 'setMeta').resolves(null);
+      proc = new lgtm.LGTMProcessor(reviewer, 1, null);
       sinon.spy(proc, "mergePR");
     });
 
