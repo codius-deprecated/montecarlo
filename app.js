@@ -97,6 +97,7 @@ app.post('/github-hook', function(req, res) {
       req.body.repository.name,
       -1
     );
+    res.send("Crawling.");
   } else if (eventType == 'issue_comment') {
     console.log("New comment on %s/%s/%s. Reviewing!",
         req.body.repository.owner.login,
@@ -107,6 +108,7 @@ app.post('/github-hook', function(req, res) {
       req.body.repository.name,
       req.body.issue.number
     );
+    res.send("Crawling.");
   } else if (eventType == 'pull_request') {
     if (req.body.action == "opened" || req.body.action == "reopened" || req.body.action == "closed") {
       console.log("Opened/reopened/closed pull request: %s/%s/%s",
@@ -119,6 +121,7 @@ app.post('/github-hook', function(req, res) {
         req.body.pull_request.number
       );
     }
+    res.send("Crawling.");
   } else if (eventType == 'push') {
     console.log("New push to %s/%s. Reviewing all PRs.",
         req.body.repository.owner.login,
@@ -128,6 +131,7 @@ app.post('/github-hook', function(req, res) {
       req.body.repository.name,
       -1
     );
+    res.send("Crawling.");
   } else {
     res.send("Unknown event: " + JSON.stringify(req.body));
   }
