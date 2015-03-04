@@ -4,4 +4,11 @@ monty.app.listen(monty.app.get('port'), function() {
   console.log('Dashboard is running at localhost:' + monty.app.get('port'));
 });
 
-monty.queue.processNextPullRequest().then(monty.queue.processNextPullRequest.bind(monty.queue));
+function proc() {
+  return monty.queue.processNextPullRequest().then(proc);
+}
+
+proc().catch(function(err) {
+  console.exception("Error while processing review queue:", err);
+  proc();
+});
