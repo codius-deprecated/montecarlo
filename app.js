@@ -47,7 +47,6 @@ app.get('/', function(req, res) {
       var buildStatus = [];
       circleProjects.forEach(function(r) {
         if (r.vcs_url.indexOf('/codius/') != -1) {
-          console.log(r.branches.master.recent_builds);
           var build;
           if (r.branches.integration) {
             build = r.branches.integration.recent_builds[0];
