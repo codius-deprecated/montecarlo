@@ -89,37 +89,46 @@ app.get('/', function(req, res) {
 app.post('/github-hook', function(req, res) {
   var eventType = req.headers['x-github-event'];
   console.log("Handling github hook: %s", eventType);
-  console.log(req.body);
   if (eventType == 'status') {
+    console.log("Status updated on a commit in %s/%s. Reviewing all PRs.",
+        req.body.repository.owner.login,
+        req.body.repository.name);
     queue.enqueuePullRequest(
       req.body.repository.owner.login,
       req.body.repository.name,
       -1
     );
-    res.send("Reviewing");
   } else if (eventType == 'issue_comment') {
+    console.log("New comment on %s/%s/%s. Reviewing!",
+        req.body.repository.owner.login,
+        req.body.repository.name,
+        req.body.issue.number);
     queue.enqueuePullRequest(
       req.body.repository.owner.login,
       req.body.repository.name,
       req.body.issue.number
     );
-    res.send("Reviewing");
   } else if (eventType == 'pull_request') {
     if (req.body.action == "opened" || req.body.action == "reopened" || req.body.action == "closed") {
+      console.log("Opened/reopened/closed pull request: %s/%s/%s",
+          req.body.pull_request.base.repo.owner.login,
+          req.body.pull_request.base.repo.name,
+          req.body.pull_request.number);
       queue.enqueuePullRequest(
         req.body.pull_request.base.repo.owner.login,
         req.body.pull_request.base.repo.name,
         req.body.pull_request.number
       );
     }
-    res.send("Handling pull request");
   } else if (eventType == 'push') {
+    console.log("New push to %s/%s. Reviewing all PRs.",
+        req.body.repository.owner.login,
+        req.body.repository.name);
     queue.enqueuePullRequest(
       req.body.repository.owner.login,
       req.body.repository.name,
       -1
     );
-    res.send("Reviewing");
   } else {
     res.send("Unknown event: " + JSON.stringify(req.body));
   }
