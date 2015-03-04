@@ -17,7 +17,7 @@ var circleci = require('./lib/circleci');
 var project = tracker.project(process.env.TRACKER_PROJECT_ID);
 var queue = new PullRequestQueue(kue, github, project);
 queue.addReviewerFactory(function(r) {
-  return new reviewers.LGTMProcessor(r, nconf.get('reviewers:lgtm:threshold'));
+  return new reviewers.LGTMProcessor(r, nconf.get('reviewers:lgtm:threshold'), redis);
 });
 queue.addReviewerFactory(function(r) {
   return new reviewers.TrackerProcessor(r, project);
