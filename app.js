@@ -124,7 +124,7 @@ app.post('/github-hook', function(req, res) {
     res.send("Crawling.");
   } else if (eventType == 'push') {
     console.log("New push to %s/%s. Reviewing all PRs.",
-        req.body.repository.owner.login,
+        req.body.repository.owner.name,
         req.body.repository.name);
     queue.enqueuePullRequest(
       req.body.repository.owner.login,
