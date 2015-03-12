@@ -13,6 +13,8 @@ var nconf = require('./lib/config');
 var redis = require('./lib/redis');
 var travis = require('./lib/travis');
 var circleci = require('./lib/circleci');
+var RepoList = require('lib/repolist');
+var repos = new RepoList(github);
 
 var project = tracker.project(process.env.TRACKER_PROJECT_ID);
 var queue = new PullRequestQueue(kue, github, redis);
@@ -138,27 +140,15 @@ app.post('/github-hook', function(req, res) {
 });
 
 app.get('/crawl', function(req, res) {
-  github.user.getTeamsAsync({}).then(function(teams) {
-    var p = [];
-    teams.forEach(function(team) {
-      console.log("Looking for all repos in team %s/%s",
-          team.organization.login,
-          team.name);
-      p.push(github.orgs.getTeamReposAsync({
-        id: team.id
-      }).then(function(repos) {
-        var p = [];
-        repos.forEach(function(repo) {
-          console.log("Crawling all pull requests in %s/%s",
-              repo.owner.login,
-              repo.name);
-          p.push(queue.enqueuePullRequest(repo.owner.login, repo.name, -1));
-        });
-        return bluebird.all(p);
-      }));
+  repos.updateHooks().then(function() {
+    return repos.getRepos();
+  }).then(function(repos) {
+    repos.forEach(function(repo) {
+      console.log("Crawling all pull requests in %s/%s",
+          repo.owner.login,
+          repo.name);
+      queue.enqueuePullRequest(repo.owner.login, repo.name, -1);
     });
-    return bluebird.all(p);
-  }).then(function() {
     res.send("Running crawler on repos!");
   });
 });
