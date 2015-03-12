@@ -54,14 +54,16 @@ html(lang="en")
         h1 Build Status
         table(class="build-status")
           tr
-            th Repository
-            th Last Build
+            th Commit
+            th Result
           each val in buildStatus
             - var cls = "failed"
             if val.state == "success"
               - var cls = "success"
             tr(class=cls)
               td
-                a(href=val.project_url)= val.slug
-              td
+                a(href=val.build_url)= val.slug+"/"+val.commit.commit.substr(0, 7)
+              td(rowspan=2)
                 a(href=val.build_url)= val.state
+            tr
+              td(colspan=2)= val.commit.subject

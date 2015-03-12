@@ -13,8 +13,12 @@ var nconf = require('./lib/config');
 var redis = require('./lib/redis');
 var travis = require('./lib/travis');
 var circleci = require('./lib/circleci');
-var RepoList = require('lib/repolist');
+
+var RepoList = require('./lib/repolist');
+var Health = require('./lib/health');
+
 var repos = new RepoList(github);
+var health = new Health(circleci, repos);
 
 var project = tracker.project(process.env.TRACKER_PROJECT_ID);
 var queue = new PullRequestQueue(kue, github, redis);
@@ -44,28 +48,20 @@ app.get('/', function(req, res) {
     }),
     redis.hgetAsync("crawl-state", "last-run"),
     redis.hgetAsync("crawl-state", "running"),
-    circleci.getProjects(),
-    function(reqs, lastRun, isRunning, circleProjects) {
-      var buildStatus = [];
-      circleProjects.forEach(function(r) {
-        if (r.vcs_url.indexOf('/codius/') != -1) {
-          var build;
-          if (r.branches.integration) {
-            build = r.branches.integration.recent_builds[0];
-          } else if (r.branches.develop) {
-            build = r.branches.develop.recent_builds[0];
-          } else {
-            build = r.branches.master.recent_builds[0];
-          }
-          buildStatus.push({
-            slug: 'codius/'+r.reponame,
-            project_url: 'https://circleci.com/gh/codius/'+r.reponame,
-            build_url: 'https://circleci.com/gh/codius/'+r.reponame+'/'+build.build_num,
-            state: build.outcome
-          });
+    health.getLatestBuilds(1),
+    function(reqs, lastRun, isRunning, latestBuilds) {
+      var queue = {merged: [], open: [], closed: []};
+      var success = 0;
+      var failure = 0;
+      var healthMatrix = {};
+      latestBuilds.forEach(function(b) {
+        if (b.state.indexOf("success") == 0) {
+          success += 1;
+        } else {
+          failure += 1;
         }
       });
-      var queue = {merged: [], open: [], closed: []};
+      var healthPct = success / (failure + success)
       reqs.forEach(function(r) {
         if (r) {
           if (r.state == "merged") {
@@ -81,7 +77,8 @@ app.get('/', function(req, res) {
         queue: queue,
         lastRun: moment(lastRun).format('MMM Do YY, h:mm:ss a'),
         isRunning: isRunning,
-        buildStatus: buildStatus
+        buildStatus: latestBuilds,
+        overallHealth: healthPct
       });
     }
   );
