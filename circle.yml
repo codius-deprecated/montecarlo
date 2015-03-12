@@ -1,3 +1,10 @@
+dependencies:
+  pre:
+    - npm install -g istanbul-coveralls
+
+test:
+  post:
+    - istanbul-coveralls
 deployment:
   prod:
     branch: master

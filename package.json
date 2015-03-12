@@ -4,7 +4,7 @@
   "description": "Ripple Labs' \"Friendly\" \"Helpful\" \"Robot\"",
   "main": "web.js",
   "scripts": {
-    "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha"
+    "test": "NODE_ENV=test istanbul cover _mocha"
   },
   "author": "",
   "license": "ISC",
