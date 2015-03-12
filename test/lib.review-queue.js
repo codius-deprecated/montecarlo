@@ -31,11 +31,12 @@ describe('PullRequestQueue', function() {
 
   it('processes an item from the job queue without crashing', function(done) {
     var queue = new PullRequestQueue(kue, github, null);
-    queue.addReviewerFactory(TestFactory);
+    queue.addReviewerFactory(function(f) {return new TestFactory(f)});
     queue.enqueuePullRequest('codius', 'codius-sandbox-core', 1);
     expect(queue.processNextPullRequest()
       .then(function() {
-        expect(seenRequests).to.deep.equal([]);
+        expect(seenRequests).to.have.length(1);
+        expect(seenRequests[0]).to.contain.keys('head', 'base');
     })).to.notify(done);
   });
 });
