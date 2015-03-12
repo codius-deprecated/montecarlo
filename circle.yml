@@ -1,6 +1,6 @@
 dependencies:
   pre:
-    - sudo npm install -g istanbul-coveralls istanbul
+    - npm install -g istanbul-coveralls istanbul
 
 test:
   post:
