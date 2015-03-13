@@ -64,11 +64,11 @@ app.get('/', function(req, res) {
       var healthPct = success / (failure + success)
       reqs.forEach(function(r) {
         if (r) {
-          if (r.state == "merged") {
+          if (r.state.indexOf("merged") == 0) {
             queue.merged.push(r);
-          } else if (r.state == "open") {
+          } else if (r.state.indexOf("open") == 0) {
             queue.open.push(r);
-          } else if (r.state == "closed") {
+          } else if (r.state.indexOf("closed") == 0) {
             queue.closed.push(r);
           }
         }
