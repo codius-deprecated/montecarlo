@@ -27,6 +27,14 @@ describe('PullRequestReviewer', function() {
     return redis.delAsync('pull-requests');
   });
 
+  after(function() {
+    return redis.smembersAsync('pull-requests').map(Number).each(function(id) {
+      return redis.delAsync('pr:'+id);
+    }).then(function() {
+      return redis.delAsync('pull-requests');
+    });
+  });
+
   describe('#reviewAll', function() {
     it('reviews a list of pull requests', function() {
       var proc = new MockProcessor();
