@@ -8,6 +8,7 @@ var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 var kue = require('../lib/kue');
 var github = require('../lib/github');
+var redis = require('../lib/redis');
 
 var expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -30,7 +31,7 @@ describe('PullRequestQueue', function() {
   });
 
   it('processes an item from the job queue without crashing', function(done) {
-    var queue = new PullRequestQueue(kue, github, null);
+    var queue = new PullRequestQueue(kue, github, redis);
     queue.addReviewerFactory(function(f) {return new TestFactory(f)});
     queue.enqueuePullRequest('codius', 'codius-sandbox-core', 1);
     expect(queue.processNextPullRequest()

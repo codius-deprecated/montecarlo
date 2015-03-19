@@ -2,6 +2,7 @@ var bluebird = require('bluebird');
 
 bluebird.longStackTraces();
 
+var redis = require('redis');
 var replay = require('replay');
 var expect = require('chai').expect;
 var sinon = require('sinon');
@@ -19,7 +20,7 @@ describe('LGTMReviewer', function() {
   });
 
   beforeEach(function() {
-    reviewer = new PullRequestReviewer(github, 'codius', 'codius-sandbox');
+    reviewer = new PullRequestReviewer(github, 'codius', 'codius-sandbox', redis);
     proc = new lgtm.LGTMProcessor(reviewer, 1);
   });
 
@@ -75,7 +76,7 @@ describe('LGTMReviewer', function() {
     var reviewer, proc;
 
     beforeEach(function() {
-      reviewer = new PullRequestReviewer(github, 'codius', 'codius-host');
+      reviewer = new PullRequestReviewer(github, 'codius', 'codius-host', redis);
       proc = new lgtm.LGTMProcessor(reviewer, 1);
     });
 
@@ -111,7 +112,7 @@ describe('LGTMReviewer', function() {
 
   describe('#review', function() {
     beforeEach(function() {
-      reviewer = new PullRequestReviewer(github, 'codius', 'codius-host');
+      reviewer = new PullRequestReviewer(github, 'codius', 'codius-host', redis);
       sinon.stub(reviewer, 'setMeta').resolves(null);
       proc = new lgtm.LGTMProcessor(reviewer, 1, null);
       sinon.spy(proc, "mergePR");

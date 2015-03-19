@@ -9,6 +9,7 @@ var sinon = require('sinon');
 var sinonAsPromised = require('sinon-as-promised')(bluebird.Promise);
 var tracker = require('../lib/reviewers/tracker');
 var github = require('../lib/github');
+var redis = require('../lib/redis');
 var labelClass = require('pivotaltracker/lib/resources/label').Service;
 var storyClass = require('pivotaltracker/lib/resources/story').Service;
 var commentClass = require('pivotaltracker/lib/resources/comment').Service;
@@ -32,7 +33,7 @@ describe('TrackerProcessor', function() {
   });
 
   beforeEach(function() {
-    reviewer = new PullRequestReviewer(github, 'codius', 'codius-host');
+    reviewer = new PullRequestReviewer(github, 'codius', 'codius-host', redis);
     proj = trackerClient.project(1);
     proc = new tracker.TrackerProcessor(reviewer, proj);
   });
