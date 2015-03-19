@@ -120,6 +120,7 @@ describe('LGTMReviewer', function() {
     it('merges a valid pull request', function() {
       return reviewer.getPullRequest(43).then(function(pr) {
         pr.state = "open";
+        pr.mergeable = true;
         return expect(proc.review(pr)).to.be.fulfilled.then(function() {
           expect(proc.mergePR.called).to.equal(true);
         });
