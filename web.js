@@ -1,7 +1,8 @@
+var winston = require('./lib/winston');
 var monty = require('./app');
 
 monty.app.listen(monty.app.get('port'), function() {
-  console.log('Dashboard is running at localhost:' + monty.app.get('port'));
+  winston.info('Dashboard is running at localhost:' + monty.app.get('port'));
 });
 
 function proc() {
@@ -9,7 +10,7 @@ function proc() {
 }
 
 proc().catch(function(err) {
-  console.log("Error while processing review queue:");
-  console.log(err);
+  winston.error("Error while processing review queue:");
+  winston.error(err);
   proc();
 });

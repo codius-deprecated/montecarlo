@@ -26,7 +26,8 @@
     "shuffle-array": "^0.1.0",
     "slack-client": "^1.2.2",
     "string-template": "^0.2.0",
-    "travis-ci": "^2.0.3"
+    "travis-ci": "^2.0.3",
+    "winston": "^0.9.0"
   },
   "engines": {
     "node": "0.10.x"

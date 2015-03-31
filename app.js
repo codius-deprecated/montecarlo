@@ -1,3 +1,4 @@
+var winston = require('./lib/winston');
 var bluebird = require('bluebird');
 var moment = require('moment');
 var express = require('express');
@@ -104,9 +105,9 @@ app.get('/', function(req, res) {
 
 app.post('/github-hook', function(req, res) {
   var eventType = req.headers['x-github-event'];
-  console.log("Handling github hook: %s", eventType);
+  winston.log("Handling github hook: %s", eventType);
   if (eventType == 'status') {
-    console.log("Status updated on a commit in %s/%s. Reviewing all PRs.",
+    winston.info("Status updated on a commit in %s/%s. Reviewing all PRs.",
         req.body.repository.owner.login,
         req.body.repository.name);
     queue.enqueuePullRequest(
@@ -116,7 +117,7 @@ app.post('/github-hook', function(req, res) {
     );
     res.send("Crawling.");
   } else if (eventType == 'issue_comment') {
-    console.log("New comment on %s/%s/%s. Reviewing!",
+    winston.info("New comment on %s/%s/%s. Reviewing!",
         req.body.repository.owner.login,
         req.body.repository.name,
         req.body.issue.number);
@@ -128,7 +129,7 @@ app.post('/github-hook', function(req, res) {
     res.send("Crawling.");
   } else if (eventType == 'pull_request') {
     if (req.body.action == "opened" || req.body.action == "reopened" || req.body.action == "closed") {
-      console.log("Opened/reopened/closed pull request: %s/%s/%s",
+      winston.info("Opened/reopened/closed pull request: %s/%s/%s",
           req.body.pull_request.base.repo.owner.login,
           req.body.pull_request.base.repo.name,
           req.body.pull_request.number);
@@ -140,7 +141,7 @@ app.post('/github-hook', function(req, res) {
     }
     res.send("Crawling.");
   } else if (eventType == 'push') {
-    console.log("New push to %s/%s. Reviewing all PRs.",
+    winston.info("New push to %s/%s. Reviewing all PRs.",
         req.body.repository.owner.name,
         req.body.repository.name);
     queue.enqueuePullRequest(
@@ -159,7 +160,7 @@ app.get('/crawl', function(req, res) {
     return repos.getRepos();
   }).then(function(repos) {
     repos.forEach(function(repo) {
-      console.log("Crawling all pull requests in %s/%s",
+      winston.info("Crawling all pull requests in %s/%s",
           repo.owner.login,
           repo.name);
       queue.enqueuePullRequest(repo.owner.login, repo.name, -1);
