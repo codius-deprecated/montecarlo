@@ -37,6 +37,24 @@ app.set('view engine', 'jade');
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 
+app.get('/api/v1/builds', function(req, res) {
+  health.getLatestBuilds(1).then(function(builds) {
+    res.json(builds);
+  });
+});
+
+app.get('/api/v1/pull-requests', function(req, res) {
+  redis.smembersAsync('pull-requests').map(Number).then(function(ids) {
+    var p = [];
+    ids.forEach(function(id) {
+      p.push(redis.hgetallAsync('pr:'+id));
+    });
+    return bluebird.all(p);
+  }).then(function(prs) {
+    res.json(prs);
+  });
+});
+
 app.get('/', function(req, res) {
   bluebird.join(
     redis.smembersAsync("pull-requests").map(Number).then(function(ids) {
@@ -126,7 +144,7 @@ app.post('/github-hook', function(req, res) {
         req.body.repository.owner.name,
         req.body.repository.name);
     queue.enqueuePullRequest(
-      req.body.repository.owner.login,
+      req.body.repository.owner.name,
       req.body.repository.name,
       -1
     );
