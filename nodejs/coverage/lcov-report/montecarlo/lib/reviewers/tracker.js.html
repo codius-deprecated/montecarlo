@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for montecarlo/lib/reviewers/tracker.js</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="../../../prettify.css">
+
+    <link rel="stylesheet" href="../../../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header medium">
+    <h1>Code coverage report for <span class="entity">montecarlo/lib/reviewers/tracker.js</span></h1>
+    <h2>
+        
+        Statements: <span class="metric">59.65% <small>(34 / 57)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Branches: <span class="metric">54.55% <small>(12 / 22)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Functions: <span class="metric">60% <small>(12 / 20)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Lines: <span class="metric">59.65% <small>(34 / 57)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../../../index.html">All files</a> &#187; <a href="index.html">montecarlo/lib/reviewers/</a> &#187; tracker.js</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">6</span>
+<span class="cline-any cline-yes">6</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6</span>
+<span class="cline-any cline-yes">6</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6</span>
+<span class="cline-any cline-yes">6</span>
+<span class="cline-any cline-yes">6</span>
+<span class="cline-any cline-yes">24</span>
+<span class="cline-any cline-yes">41</span>
+<span class="cline-any cline-yes">41</span>
+<span class="cline-any cline-yes">12</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var format = require('string-template');
+var bluebird = require('bluebird');
+&nbsp;
+function TrackerProcessor(reviewer, project) {
+  this.reviewer = reviewer;
+  this.project = project;
+}
+&nbsp;
+TrackerProcessor.prototype = {
+  review: function(pr) {
+    var self = this;
+    return bluebird.join(
+      self.getTrackerStories(pr, 1),
+      pr,
+      self.updateTracker.bind(self));
+<span class="cstat-no" title="statement not covered" >    return this.getCommits(pr, 1);</span>
+  },
+  getTrackerStories: function(pr, page) {
+    var self = this;
+    return self.reviewer.github.pullRequests.getCommitsAsync({
+      repo: self.reviewer.repo,
+      user: self.reviewer.user,
+      number: pr.number,
+      per_page: 100,
+      page: page
+    }).then(function(commits) {
+      var stories = [];
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (commits.length &gt; 0) {
+        commits.forEach(function(commit) {
+          commit.commit.message.split(/\r?\n/).forEach(function(line) {
+            var s = line.match(/\[(Finishes|Fixes|Delivers):? #([0-9]+)\]/i);
+            if (s) {
+              stories.push(Number(s[2]));
+            }
+          });
+        });
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (commits.length == 100) {
+<span class="cstat-no" title="statement not covered" >          return self.getCommits(page + 1, pr).then(<span class="fstat-no" title="function not covered" >function(s) {</span></span>
+<span class="cstat-no" title="statement not covered" >            return stories.concat(s);</span>
+          });
+        }
+      }
+      return stories;
+    });
+  },
+  updateTracker: function(stories, pr) {
+    var self = this;
+    var p = [];
+    stories.forEach(function(s) {
+      if (pr.state == "open") {
+        p.push(self.getReviewLabel().then(function(label) {
+          return self.markStoryInReview(label, s, pr);
+        }));
+      } else <span class="missing-if-branch" title="else path not taken" >E</span>if (pr.state == "closed" &amp;&amp; pr.merged == true) {
+        p.push(self.reviewer.github.pullRequests.getMergedAsync({
+          repo: self.reviewer.repo,
+          user: self.reviewer.user,
+          number: pr.number
+        }).then(function(s) {
+          return self.markStoryDelivered(s, pr)
+        }));
+      }
+    });
+    return bluebird.all(p);
+  },
+  getReviewLabel: <span class="fstat-no" title="function not covered" >function() {</span>
+<span class="cstat-no" title="statement not covered" >    var self = this;</span>
+<span class="cstat-no" title="statement not covered" >    return self.project.labels.allAsync().then(<span class="fstat-no" title="function not covered" >function(result) {</span></span>
+<span class="cstat-no" title="statement not covered" >      for (idx in result) {</span>
+<span class="cstat-no" title="statement not covered" >        if (result[idx].name == 'needs-review') {</span>
+<span class="cstat-no" title="statement not covered" >          return result[idx];</span>
+        }
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      return self.project.labels.createAsync({name: 'needs-review'});</span>
+    });
+  },
+  markStoryInReview: <span class="fstat-no" title="function not covered" >function(label, id, pr) {</span>
+<span class="cstat-no" title="statement not covered" >    var self = this;</span>
+<span class="cstat-no" title="statement not covered" >    var storyObj = self.project.story(id);</span>
+<span class="cstat-no" title="statement not covered" >    return storyObj.getAsync().then(<span class="fstat-no" title="function not covered" >function(story) {</span></span>
+<span class="cstat-no" title="statement not covered" >      if (story.currentState == 'unstarted') {</span>
+<span class="cstat-no" title="statement not covered" >        story.labels.push(label);</span>
+<span class="cstat-no" title="statement not covered" >        return bluebird.all([</span>
+          storyObj.updateAsync({
+            currentState: 'started',
+            labels: story.labels
+          }),
+          storyObj.comments.createAsync({
+            project_id: self.project.id,
+            story_id: id,
+            text: self.buildTrackerComment(pr.number)
+          })
+        ]);
+      }
+    });
+  },
+  markStoryDelivered: function(id, pr) {
+    var self = this;
+    var storyObj = self.project.story(id);
+    return storyObj.getAsync().then(function(story) {
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (story.currentState == 'finished' || story.currentState == 'started') {
+<span class="cstat-no" title="statement not covered" >        return storyObj.updateAsync({</span>
+          currentState: 'delivered',
+        });
+      }
+    });
+  },
+  markStoryAccepted: <span class="fstat-no" title="function not covered" >function(id, pr) {</span>
+<span class="cstat-no" title="statement not covered" >    var self = this;</span>
+<span class="cstat-no" title="statement not covered" >    var storyObj = self.project.story(id);</span>
+<span class="cstat-no" title="statement not covered" >    return storyObj.getAsync().then(<span class="fstat-no" title="function not covered" >function(story) {</span></span>
+<span class="cstat-no" title="statement not covered" >      if (story.currentState == 'delivered') {</span>
+<span class="cstat-no" title="statement not covered" >        return storyObj.updateAsync({</span>
+          currentState: 'accepted',
+        });
+      }
+    });
+  },
+  buildTrackerComment: <span class="fstat-no" title="function not covered" >function(number) {</span>
+<span class="cstat-no" title="statement not covered" >    var self = this;</span>
+<span class="cstat-no" title="statement not covered" >    return format("Github pull request: https://github.com/{user}/{repo}/pull/{number}",</span>
+      {
+        user: self.reviewer.user,
+        repo: self.reviewer.repo,
+        number: number
+      }
+    );
+  }
+  /*updateTracker: function(id) {
+    var self = this;
+    self.project_id = 1262710;
+    id = 87138074;
+    var storyObj = pivotal.project(self.project_id).story(id);
+    pivotal.project(self.project_id).labels.allAsync().then(function(result) {
+      for (idx in result) {
+        if (result[idx].name == 'needs-review') {
+          return result[idx];
+        }
+      }
+&nbsp;
+      return pivotal.project(self.project_id).labels.createAsync({name: 'needs-review'});
+    }).then(function(reviewLabel) {
+      return storyObj.getAsync().then(function(story) {
+        if (story.currentState == 'finished') {
+          story.labels.push(reviewLabel);
+          return bluebird.join(storyObj.updateAsync({
+            currentState: 'delivered',
+            labels: story.labels
+          }), storyObj.comments.createAsync({
+            project_id: self.project_id,
+            story_id: id,
+            text: "Github pull request: https://github.com/"+self.user+"/"+self.repo+"/pull/"+self.id
+          }).then(function(result) {
+            console.log("Added comment and moved to needs-review");
+          }));
+        }
+      });
+    });
+  }*/
+};
+&nbsp;
+module.exports.TrackerProcessor = TrackerProcessor;
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Mar 31 2015 15:46:26 GMT-0700 (PDT)</div>
+</div>
+
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+
+<script src="../../../sorter.js"></script>
+</body>
+</html>

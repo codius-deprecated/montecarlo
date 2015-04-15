@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for montecarlo/app.js</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="../prettify.css">
+
+    <link rel="stylesheet" href="../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header medium">
+    <h1>Code coverage report for <span class="entity">montecarlo/app.js</span></h1>
+    <h2>
+        
+        Statements: <span class="metric">61.05% <small>(58 / 95)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Branches: <span class="metric">24% <small>(6 / 25)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Functions: <span class="metric">35% <small>(7 / 20)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Lines: <span class="metric">61.05% <small>(58 / 95)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">montecarlo/</a> &#187; app.js</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var winston = require('./lib/winston');
+var bluebird = require('bluebird');
+var moment = require('moment');
+var express = require('express');
+var app = express();
+var reviewer = require('./lib/reviewer');
+var reviewers = require('./lib/reviewers');
+var bodyParser = require('body-parser');
+var PullRequestQueue = require('./lib/review-queue').PullRequestQueue;
+var tracker = require('./lib/tracker');
+var kue = require('./lib/kue');
+var github = require('./lib/github');
+var nconf = require('./lib/config');
+var redis = require('./lib/redis');
+var travis = require('./lib/travis');
+var circleci = require('./lib/circleci');
+&nbsp;
+var RepoList = require('./lib/repolist');
+var Health = require('./lib/health');
+&nbsp;
+var repos = new RepoList(github);
+var health = new Health(circleci, repos);
+&nbsp;
+var project = tracker.project(process.env.TRACKER_PROJECT_ID);
+var queue = new PullRequestQueue(kue, github, redis);
+queue.addReviewerFactory(<span class="fstat-no" title="function not covered" >function(r) {</span>
+<span class="cstat-no" title="statement not covered" >  return new reviewers.LGTMProcessor(r, nconf.get('reviewers:lgtm:threshold'));</span>
+});
+queue.addReviewerFactory(<span class="fstat-no" title="function not covered" >function(r) {</span>
+<span class="cstat-no" title="statement not covered" >  return new reviewers.TrackerProcessor(r, project);</span>
+});
+queue.addReviewerFactory(<span class="fstat-no" title="function not covered" >function(r) {</span>
+<span class="cstat-no" title="statement not covered" >  return new reviewers.WebuiStateProcessor(r);</span>
+});
+&nbsp;
+app.set('port', (process.env.PORT || 5000));
+app.set('view engine', 'jade');
+app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.json());
+&nbsp;
+app.get('/api/v1/builds', <span class="fstat-no" title="function not covered" >function(req, res) {</span>
+<span class="cstat-no" title="statement not covered" >  health.getLatestBuilds(1).then(<span class="fstat-no" title="function not covered" >function(builds) {</span></span>
+<span class="cstat-no" title="statement not covered" >    res.json(builds);</span>
+  });
+});
+&nbsp;
+app.get('/api/v1/pull-requests', <span class="fstat-no" title="function not covered" >function(req, res) {</span>
+<span class="cstat-no" title="statement not covered" >  redis.smembersAsync('pull-requests').map(Number).then(<span class="fstat-no" title="function not covered" >function(ids) {</span></span>
+<span class="cstat-no" title="statement not covered" >    var p = [];</span>
+<span class="cstat-no" title="statement not covered" >    ids.forEach(<span class="fstat-no" title="function not covered" >function(id) {</span></span>
+<span class="cstat-no" title="statement not covered" >      p.push(redis.hgetallAsync('pr:'+id));</span>
+    });
+<span class="cstat-no" title="statement not covered" >    return bluebird.all(p);</span>
+  }).then(<span class="fstat-no" title="function not covered" >function(prs) {</span>
+<span class="cstat-no" title="statement not covered" >    res.json(prs);</span>
+  });
+});
+&nbsp;
+app.get('/', function(req, res) {
+  bluebird.join(
+    redis.smembersAsync("pull-requests").map(Number).then(function(ids) {
+      var p = [];
+      ids.forEach(<span class="fstat-no" title="function not covered" >function(id) {</span>
+<span class="cstat-no" title="statement not covered" >        p.push(redis.hgetallAsync('pr:'+id));</span>
+      });
+      return bluebird.all(p);
+    }),
+    redis.hgetAsync("crawl-state", "last-run"),
+    redis.hgetAsync("crawl-state", "running"),
+    health.getLatestBuilds(1),
+    function(reqs, lastRun, isRunning, latestBuilds) {
+      var queue = {merged: [], open: [], closed: []};
+      var success = 0;
+      var failure = 0;
+      var healthMatrix = {};
+      latestBuilds.forEach(<span class="fstat-no" title="function not covered" >function(b) {</span>
+<span class="cstat-no" title="statement not covered" >        if (b.state.indexOf("success") == 0) {</span>
+<span class="cstat-no" title="statement not covered" >          success += 1;</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >          failure += 1;</span>
+        }
+      });
+      var healthPct = success / (failure + success)
+      reqs.forEach(<span class="fstat-no" title="function not covered" >function(r) {</span>
+<span class="cstat-no" title="statement not covered" >        if (r) {</span>
+<span class="cstat-no" title="statement not covered" >          if (r.state.indexOf("merged") == 0) {</span>
+<span class="cstat-no" title="statement not covered" >            queue.merged.push(r);</span>
+          } else <span class="cstat-no" title="statement not covered" >if (r.state.indexOf("open") == 0) {</span>
+<span class="cstat-no" title="statement not covered" >            queue.open.push(r);</span>
+          } else <span class="cstat-no" title="statement not covered" >if (r.state.indexOf("closed") == 0) {</span>
+<span class="cstat-no" title="statement not covered" >            queue.closed.push(r);</span>
+          }
+        }
+      });
+      res.render('index', {
+        queue: queue,
+        lastRun: moment(lastRun).format('MMM Do YY, h:mm:ss a'),
+        isRunning: isRunning,
+        buildStatus: latestBuilds,
+        overallHealth: healthPct
+      });
+    }
+  );
+});
+&nbsp;
+app.post('/github-hook', function(req, res) {
+  var eventType = req.headers['x-github-event'];
+  winston.log("Handling github hook: %s", eventType);
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (eventType == 'status') {
+<span class="cstat-no" title="statement not covered" >    winston.info("Status updated on a commit in %s/%s. Reviewing all PRs.",</span>
+        req.body.repository.owner.login,
+        req.body.repository.name);
+<span class="cstat-no" title="statement not covered" >    queue.enqueuePullRequest(</span>
+      req.body.repository.owner.login,
+      req.body.repository.name,
+      -1
+    );
+<span class="cstat-no" title="statement not covered" >    res.send("Crawling.");</span>
+  } else <span class="missing-if-branch" title="if path not taken" >I</span>if (eventType == 'issue_comment') {
+<span class="cstat-no" title="statement not covered" >    winston.info("New comment on %s/%s/%s. Reviewing!",</span>
+        req.body.repository.owner.login,
+        req.body.repository.name,
+        req.body.issue.number);
+<span class="cstat-no" title="statement not covered" >    queue.enqueuePullRequest(</span>
+      req.body.repository.owner.login,
+      req.body.repository.name,
+      req.body.issue.number
+    );
+<span class="cstat-no" title="statement not covered" >    res.send("Crawling.");</span>
+  } else <span class="missing-if-branch" title="if path not taken" >I</span>if (eventType == 'pull_request') {
+<span class="cstat-no" title="statement not covered" >    if (req.body.action == "opened" || req.body.action == "reopened" || req.body.action == "closed") {</span>
+<span class="cstat-no" title="statement not covered" >      winston.info("Opened/reopened/closed pull request: %s/%s/%s",</span>
+          req.body.pull_request.base.repo.owner.login,
+          req.body.pull_request.base.repo.name,
+          req.body.pull_request.number);
+<span class="cstat-no" title="statement not covered" >      queue.enqueuePullRequest(</span>
+        req.body.pull_request.base.repo.owner.login,
+        req.body.pull_request.base.repo.name,
+        req.body.pull_request.number
+      );
+    }
+<span class="cstat-no" title="statement not covered" >    res.send("Crawling.");</span>
+  } else <span class="missing-if-branch" title="if path not taken" >I</span>if (eventType == 'push') {
+<span class="cstat-no" title="statement not covered" >    winston.info("New push to %s/%s. Reviewing all PRs.",</span>
+        req.body.repository.owner.name,
+        req.body.repository.name);
+<span class="cstat-no" title="statement not covered" >    queue.enqueuePullRequest(</span>
+      req.body.repository.owner.name,
+      req.body.repository.name,
+      -1
+    );
+<span class="cstat-no" title="statement not covered" >    res.send("Crawling.");</span>
+  } else {
+    res.send("Unknown event: " + JSON.stringify(req.body));
+  }
+});
+&nbsp;
+app.get('/crawl', function(req, res) {
+  repos.updateHooks().then(function() {
+    return repos.getRepos();
+  }).then(function(repos) {
+    repos.forEach(<span class="fstat-no" title="function not covered" >function(repo) {</span>
+<span class="cstat-no" title="statement not covered" >      winston.info("Crawling all pull requests in %s/%s",</span>
+          repo.owner.login,
+          repo.name);
+<span class="cstat-no" title="statement not covered" >      queue.enqueuePullRequest(repo.owner.login, repo.name, -1);</span>
+    });
+    res.send("Running crawler on repos!");
+  });
+});
+&nbsp;
+module.exports = {
+  app: app,
+  queue: queue
+};
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Mar 31 2015 15:46:26 GMT-0700 (PDT)</div>
+</div>
+
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+
+<script src="../sorter.js"></script>
+</body>
+</html>
