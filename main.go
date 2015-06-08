@@ -1,12 +1,12 @@
 package main
 
 import (
-	"./repolist"
+	"./monty"
 	"fmt"
+	"github.com/codegangsta/cli"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 	"os"
-	"strings"
 )
 
 type tokenSource struct {
@@ -17,38 +17,14 @@ func (t *tokenSource) Token() (*oauth2.Token, error) {
 	return t.token, nil
 }
 
-type command struct {
-	Owner *string
-	Args  []string
-}
-
-func extractLGTMs(s *string) int {
-	sum := 0
-	for _, line := range strings.Split(*s, "\n") {
-		if strings.Contains(line, "LGTM") || strings.Contains(line, ":+1:") {
-			sum++
-		}
-	}
-	return sum
-}
-
-func extractCommands(s *string) []string {
-	ret := make([]string, 0)
-
-	for _, line := range strings.Split(*s, "\n") {
-		if strings.HasPrefix(line, "+r") || strings.HasPrefix(line, "-r") {
-			ret = append(ret, line)
-		}
-	}
-	return ret
-}
-
 func main() {
+
 	token := os.Getenv("GITHUB_TOKEN")
 
 	if len(token) == 0 {
 		panic("No github token")
 	}
+
 	ts := &tokenSource{
 		&oauth2.Token{AccessToken: token},
 	}
@@ -56,52 +32,45 @@ func main() {
 	tc := oauth2.NewClient(oauth2.NoContext, ts)
 	client := github.NewClient(tc)
 
-	repos := repolist.New(client)
+	robot := monty.NewBrain(client)
 
-	for _, repo := range *repos.List() {
-		fmt.Println("Repo", *repo.FullName)
-		prs, _, _ := client.PullRequests.List(*repo.Owner.Login, *repo.Name, nil)
+	app := cli.NewApp()
 
-		for _, pr := range prs {
-			commands := make([]command, 0)
-
-			fmt.Println("\t", *pr.State, pr.Mergeable, *pr.Number, *pr.Title)
-			comments, _, _ := client.Issues.ListComments(*repo.Owner.Login,
-				*repo.Name, *pr.Number, nil)
-
-			lgtmCount := 0
-
-			for _, cmds := range extractCommands(pr.Body) {
-				commands = append(commands, command{pr.User.Login, strings.Split(cmds, " ")})
-			}
-
-			for _, comment := range comments {
-				lgtmCount += extractLGTMs(comment.Body)
-				for _, cmds := range extractCommands(comment.Body) {
-					commands = append(commands, command{comment.User.Login, strings.Split(cmds, " ")})
+	app.Name = "montecarlo"
+	app.Commands = []cli.Command{
+		{
+			Name:  "sync-hooks",
+			Usage: "Updates github hooks on all repos",
+			Action: func(c *cli.Context) {
+				robot.SyncRepositories()
+			},
+		},
+		{
+			Name:  "review",
+			Usage: "Reviews open pull requests",
+			Action: func(c *cli.Context) {
+				robot.ReviewPRs()
+			},
+		},
+		{
+			Name:  "status",
+			Usage: "Reports status of open pull requests",
+			Action: func(c *cli.Context) {
+				reviews := robot.ReviewPRs()
+				for _, review := range reviews {
+					fmt.Printf("%v/%v - %v\n", *review.Repository.FullName, *review.PullRequest.Number, *review.PullRequest.Title)
+					fmt.Printf("\t+1s: %v/%v\n", review.Status.LGTMCount, 1)
+					fmt.Printf("\tMergeable: %v\n", review.Status.BranchMergeable)
+					fmt.Printf("\tReview requested: %v\n", review.Status.ReviewRequested)
+					if review.Status.ReadyForMerge {
+						fmt.Printf("\tReady!\n")
+					} else {
+						fmt.Printf("\tNot yet ready.\n")
+					}
 				}
-			}
-
-			reviewRequested := false
-
-			for _, cmd := range commands {
-				if cmd.Args[0] == "+r" && len(cmd.Args) == 1 {
-					reviewRequested = true
-				} else if cmd.Args[0] == "-r" && len(cmd.Args) == 1 {
-					reviewRequested = false
-				} else {
-					fmt.Println("\t\tUNKNOWN COMMAND:", cmd.Args)
-				}
-			}
-			if reviewRequested {
-				fmt.Println("\t\tReview requested!")
-				fmt.Println("\t\tLGTMs:", lgtmCount)
-				if lgtmCount >= 1 {
-					fmt.Println("\t\t\tREADY FOR MERGE!!!")
-				}
-			} else {
-				fmt.Println("\t\tReview requested!")
-			}
-		}
+			},
+		},
 	}
+
+	app.Run(os.Args)
 }

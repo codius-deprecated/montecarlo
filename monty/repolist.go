@@ -1,4 +1,4 @@
-package repolist
+package monty
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ type RepositoryList struct {
 	client *github.Client
 }
 
-func New(client *github.Client) *RepositoryList {
+func NewRepolist(client *github.Client) *RepositoryList {
 	ret := new(RepositoryList)
 	ret.client = client
 	return ret
