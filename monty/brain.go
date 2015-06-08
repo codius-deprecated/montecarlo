@@ -1,9 +1,7 @@
 package monty
 
 import (
-	"fmt"
 	"github.com/google/go-github/github"
-	"strings"
 )
 
 type Brain struct {
@@ -12,16 +10,25 @@ type Brain struct {
 }
 
 type Status struct {
-	ReadyForMerge   bool
-	LGTMCount       int
-	BranchMergeable bool
-	ReviewRequested bool
+	Conditions []Condition
 }
 
 type Review struct {
-	Status      Status
-	PullRequest github.PullRequest
-	Repository  github.Repository
+	Status        Status
+	PullRequest   github.PullRequest
+	Repository    github.Repository
+	Comments      []github.IssueComment
+	BuildStatuses *github.CombinedStatus
+}
+
+func (self *Status) AllConditionsPassed() bool {
+	passed := true
+	for _, condition := range self.Conditions {
+		if !condition.Passed() {
+			passed = false
+		}
+	}
+	return passed
 }
 
 func NewBrain(client *github.Client) *Brain {
@@ -50,47 +57,23 @@ func (self *Brain) ReviewPRs() []Review {
 }
 
 func (self *Brain) ReviewPR(repo github.Repository, pr github.PullRequest) Review {
-	commands := make([]command, 0)
-	review := Review{
-		Repository:  repo,
-		PullRequest: pr,
-	}
 
 	comments, _, _ := self.client.Issues.ListComments(*repo.Owner.Login,
 		*repo.Name, *pr.Number, nil)
 
-	review.Status.LGTMCount = 0
+	buildStatuses, _, _ := self.client.Repositories.GetCombinedStatus(*repo.Owner.Login,
+		*repo.Name, *pr.Head.SHA, nil)
 
-	for _, cmds := range extractCommands(pr.Body) {
-		commands = append(commands, command{pr.User.Login, strings.Split(cmds, " ")})
+	review := Review{
+		Repository:    repo,
+		PullRequest:   pr,
+		Comments:      comments,
+		BuildStatuses: buildStatuses,
 	}
 
-	for _, comment := range comments {
-		review.Status.LGTMCount += extractLGTMs(comment.Body)
-		for _, cmds := range extractCommands(comment.Body) {
-			commands = append(commands, command{comment.User.Login, strings.Split(cmds, " ")})
-		}
-	}
-
-	review.Status.ReviewRequested = false
-
-	for _, cmd := range commands {
-		if cmd.Args[0] == "+r" && len(cmd.Args) == 1 {
-			review.Status.ReviewRequested = true
-		} else if cmd.Args[0] == "-r" && len(cmd.Args) == 1 {
-			review.Status.ReviewRequested = false
-		} else {
-			fmt.Println("\t\tUNKNOWN COMMAND:", cmd.Args)
-		}
-	}
-
-	review.Status.ReadyForMerge = false
-
-	if review.Status.ReviewRequested {
-		if review.Status.LGTMCount >= 1 {
-			review.Status.ReadyForMerge = true
-		}
-	}
+	review.Status.Conditions = append(review.Status.Conditions, ReviewLGTMs(review))
+	review.Status.Conditions = append(review.Status.Conditions, ReviewCommands(review))
+	review.Status.Conditions = append(review.Status.Conditions, ReviewBuildStatus(review))
 
 	return review
 }

@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/google/go-github/github"
+	"github.com/mgutz/ansi"
 	"golang.org/x/oauth2"
 	"os"
+	"strings"
 )
 
 type tokenSource struct {
@@ -15,6 +17,19 @@ type tokenSource struct {
 
 func (t *tokenSource) Token() (*oauth2.Token, error) {
 	return t.token, nil
+}
+
+func printConditions(conditions []monty.Condition, depth int) {
+	for _, condition := range conditions {
+		var result string
+		if condition.Passed() {
+			result = ansi.Color(condition.Message, "green")
+		} else {
+			result = ansi.Color(condition.Message, "red")
+		}
+		fmt.Printf("%v%v:\t%v\n", strings.Repeat("\t", depth), condition.Name, result)
+		printConditions(condition.Subconditions, depth+1)
+	}
 }
 
 func main() {
@@ -47,9 +62,14 @@ func main() {
 		},
 		{
 			Name:  "review",
-			Usage: "Reviews open pull requests",
+			Usage: "Reviews and merges open pull requests",
 			Action: func(c *cli.Context) {
-				robot.ReviewPRs()
+				reviews := robot.ReviewPRs()
+				for _, review := range reviews {
+					if review.Status.AllConditionsPassed() {
+						fmt.Printf("Merging %s\n", review)
+					}
+				}
 			},
 		},
 		{
@@ -59,14 +79,14 @@ func main() {
 				reviews := robot.ReviewPRs()
 				for _, review := range reviews {
 					fmt.Printf("%v/%v - %v\n", *review.Repository.FullName, *review.PullRequest.Number, *review.PullRequest.Title)
-					fmt.Printf("\t+1s: %v/%v\n", review.Status.LGTMCount, 1)
-					fmt.Printf("\tMergeable: %v\n", review.Status.BranchMergeable)
-					fmt.Printf("\tReview requested: %v\n", review.Status.ReviewRequested)
-					if review.Status.ReadyForMerge {
-						fmt.Printf("\tReady!\n")
+					printConditions(review.Status.Conditions, 1)
+					var result string
+					if review.Status.AllConditionsPassed() {
+						result = ansi.Color("Ready!", "green")
 					} else {
-						fmt.Printf("\tNot yet ready.\n")
+						result = ansi.Color("Not yet ready.", "red")
 					}
+					fmt.Printf("\t%s\n", result)
 				}
 			},
 		},
