@@ -1,7 +1,6 @@
-package main
+package monty
 
 import (
-	"./monty"
 	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/google/go-github/github"
@@ -22,7 +21,7 @@ func (t *tokenSource) Token() (*oauth2.Token, error) {
 	return t.token, nil
 }
 
-func printConditions(conditions []monty.Condition, depth int) {
+func printConditions(conditions []Condition, depth int) {
 	for _, condition := range conditions {
 		var result string
 		if condition.Passed {
@@ -64,7 +63,7 @@ func main() {
 		Password: passwd,
 	}
 
-	robot := monty.NewBrain(client, &options)
+	robot := NewBrain(client, &options)
 
 	app := cli.NewApp()
 
@@ -99,7 +98,7 @@ func main() {
 					port, _ = strconv.Atoi(os.Getenv("PORT"))
 				}
 
-				monty.NewRestServer(robot, port).Run()
+				NewRestServer(robot, port).Run()
 			},
 		},
 		{
@@ -109,7 +108,7 @@ func main() {
 				reviews := robot.ReviewPRs()
 				for _, review := range reviews {
 					fmt.Printf("%v/%v - %v\n", *review.Repository.FullName, review.PullRequest.Number, review.PullRequest.Title)
-					conditions := make([]monty.Condition, 1)
+					conditions := make([]Condition, 1)
 					conditions[0] = review.Condition
 					printConditions(conditions, 1)
 				}
