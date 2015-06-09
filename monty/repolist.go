@@ -15,12 +15,6 @@ func NewRepolist(client *github.Client) *RepositoryList {
 	return ret
 }
 
-type Repo struct {
-	FullName *string
-	Owner    *string
-	Name     *string
-}
-
 func (self *RepositoryList) List() *[]Repo {
 	var repolist = make([]Repo, 0)
 

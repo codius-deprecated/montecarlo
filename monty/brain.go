@@ -1,7 +1,6 @@
 package monty
 
 import (
-	"fmt"
 	"github.com/google/go-github/github"
 	"gopkg.in/redis.v3"
 	"log"
@@ -11,27 +10,6 @@ type Brain struct {
 	client *github.Client
 	repos  *RepositoryList
 	memory *Memory
-}
-
-type PullRequest struct {
-	Number     int
-	SHA        string
-	Body       string
-	User       string
-	Title      string
-	Repository *Repo
-}
-
-func (self *PullRequest) ID() string {
-	return fmt.Sprintf("%s/%d", *self.Repository.FullName, self.Number)
-}
-
-type Review struct {
-	Condition     Condition
-	PullRequest   PullRequest
-	Repository    Repo
-	Comments      []github.IssueComment
-	BuildStatuses *github.CombinedStatus
 }
 
 func NewBrain(client *github.Client, redisOptions *redis.Options) *Brain {
