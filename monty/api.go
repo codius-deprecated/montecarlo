@@ -26,8 +26,8 @@ type ReviewList struct {
 
 func (self *ProjectStatusResource) Register(container *restful.Container) {
 	ws := new(restful.WebService)
-	ws.Path("/project").
-		Doc("Projects").
+	ws.Path("/status").
+		Doc("Project status").
 		Produces(restful.MIME_JSON)
 	ws.Route(ws.GET("").
 		To(self.getStatus).
