@@ -1,0 +1,50 @@
+{
+	"ImportPath": "github.com/codius/montecarlo",
+	"GoVersion": "go1.4.2",
+	"Deps": [
+		{
+			"ImportPath": "github.com/codegangsta/cli",
+			"Comment": "1.2.0-115-g616b730",
+			"Rev": "616b730509ef3f11384d159cc52545639103ea86"
+		},
+		{
+			"ImportPath": "github.com/emicklei/go-restful",
+			"Comment": "v1.1.3-54-gbdfb7d4",
+			"Rev": "bdfb7d41639a84ea7c36df648e5865cd9fbf21e2"
+		},
+		{
+			"ImportPath": "github.com/google/go-github/github",
+			"Rev": "af17a5fa8537e159dfa73f1dd1d3f08e34dea200"
+		},
+		{
+			"ImportPath": "github.com/google/go-querystring/query",
+			"Rev": "547ef5ac979778feb2f760cdb5f4eae1a2207b86"
+		},
+		{
+			"ImportPath": "github.com/mgutz/ansi",
+			"Rev": "22ddafb24adc4786c83841aa3021349818c898e4"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "dfe268fd2bb5c793f4c083803609fce9806c6f80"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2",
+			"Rev": "b5adcc2dcdf009d0391547edc6ecbaff889f5bb9"
+		},
+		{
+			"ImportPath": "gopkg.in/bsm/ratelimit.v1",
+			"Rev": "bda20d5067a03094fc6762f7ead53027afac5f28"
+		},
+		{
+			"ImportPath": "gopkg.in/bufio.v1",
+			"Comment": "v1",
+			"Rev": "567b2bfa514e796916c4747494d6ff5132a1dfce"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v3",
+			"Comment": "v3.1.2",
+			"Rev": "faa7ed46bd55be18d606f9a2542d318fb1a47356"
+		}
+	]
+}
