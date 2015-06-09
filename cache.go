@@ -13,11 +13,7 @@ type Memory struct {
 
 func NewMemory(options *redis.Options) *Memory {
 	ret := new(Memory)
-	ret.redis = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
-	})
+	ret.redis = redis.NewClient(options)
 	return ret
 }
 
