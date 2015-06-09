@@ -22,7 +22,7 @@ func (t *tokenSource) Token() (*oauth2.Token, error) {
 func printConditions(conditions []monty.Condition, depth int) {
 	for _, condition := range conditions {
 		var result string
-		if condition.Passed() {
+		if condition.Passed {
 			result = ansi.Color(condition.Message, "green")
 		} else {
 			result = ansi.Color(condition.Message, "red")
@@ -54,8 +54,8 @@ func main() {
 	app.Name = "montecarlo"
 	app.Commands = []cli.Command{
 		{
-			Name:  "sync-hooks",
-			Usage: "Updates github hooks on all repos",
+			Name:  "sync",
+			Usage: "Synchronises local state with github",
 			Action: func(c *cli.Context) {
 				robot.SyncRepositories()
 			},
@@ -66,10 +66,17 @@ func main() {
 			Action: func(c *cli.Context) {
 				reviews := robot.ReviewPRs()
 				for _, review := range reviews {
-					if review.Status.AllConditionsPassed() {
+					if review.Condition.Passed {
 						fmt.Printf("Merging %s\n", review)
 					}
 				}
+			},
+		},
+		{
+			Name:  "dashboard",
+			Usage: "Serves report data through a local REST api",
+			Action: func(c *cli.Context) {
+				monty.NewRestServer(robot).Run()
 			},
 		},
 		{
@@ -78,15 +85,10 @@ func main() {
 			Action: func(c *cli.Context) {
 				reviews := robot.ReviewPRs()
 				for _, review := range reviews {
-					fmt.Printf("%v/%v - %v\n", *review.Repository.FullName, *review.PullRequest.Number, *review.PullRequest.Title)
-					printConditions(review.Status.Conditions, 1)
-					var result string
-					if review.Status.AllConditionsPassed() {
-						result = ansi.Color("Ready!", "green")
-					} else {
-						result = ansi.Color("Not yet ready.", "red")
-					}
-					fmt.Printf("\t%s\n", result)
+					fmt.Printf("%v/%v - %v\n", *review.Repository.FullName, review.PullRequest.Number, review.PullRequest.Title)
+					conditions := make([]monty.Condition, 1)
+					conditions[0] = review.Condition
+					printConditions(conditions, 1)
 				}
 			},
 		},

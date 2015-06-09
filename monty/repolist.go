@@ -15,14 +15,24 @@ func NewRepolist(client *github.Client) *RepositoryList {
 	return ret
 }
 
-func (self *RepositoryList) List() *[]github.Repository {
-	var repolist = make([]github.Repository, 0)
+type Repo struct {
+	FullName *string
+	Owner    *string
+	Name     *string
+}
+
+func (self *RepositoryList) List() *[]Repo {
+	var repolist = make([]Repo, 0)
 
 	teams, _, _ := self.client.Organizations.ListUserTeams(nil)
 	for _, team := range teams {
 		repos, _, _ := self.client.Organizations.ListTeamRepos(*team.ID, nil)
 		for _, repo := range repos {
-			repolist = append(repolist, repo)
+			repolist = append(repolist, Repo{
+				FullName: repo.FullName,
+				Owner:    repo.Owner.Login,
+				Name:     repo.Name,
+			})
 		}
 	}
 
@@ -35,8 +45,8 @@ func (self *RepositoryList) EnableHooks() {
 	}
 }
 
-func (self *RepositoryList) EnableHook(repo *github.Repository) {
-	hooks, _, _ := self.client.Repositories.ListHooks(*repo.Owner.Login, *repo.Name, nil)
+func (self *RepositoryList) EnableHook(repo *Repo) {
+	hooks, _, _ := self.client.Repositories.ListHooks(*repo.Owner, *repo.Name, nil)
 
 	fmt.Println("Checking hooks on", *repo.FullName)
 	hasHook := false
@@ -60,6 +70,6 @@ func (self *RepositoryList) EnableHook(repo *github.Repository) {
 			},
 			Events: []string{"*"},
 		}
-		self.client.Repositories.CreateHook(*repo.Owner.Login, *repo.Name, &hook)
+		self.client.Repositories.CreateHook(*repo.Owner, *repo.Name, &hook)
 	}
 }
