@@ -64,16 +64,16 @@ type GithubResponse struct {
 func (self *GithubHookResource) handleHook(request *restful.Request, response *restful.Response) {
 	switch request.Request.Header.Get("x-github-event") {
 	case "status":
-		go self.brain.ReviewPRs()
+		self.brain.ReviewPRs()
 	case "issue_comment":
-		go self.brain.ReviewPRs()
+		self.brain.ReviewPRs()
 	case "pull_request":
 		self.brain.SyncRepositories()
-		go self.brain.ReviewPRs()
+		self.brain.ReviewPRs()
 	case "push":
-		go self.brain.ReviewPRs()
+		self.brain.ReviewPRs()
 	case "ping":
-		go self.brain.SyncRepositories()
+		self.brain.SyncRepositories()
 	}
 	response.WriteEntity(GithubResponse{
 		Message: "OK",
