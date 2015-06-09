@@ -1,1 +1,1 @@
-web: montecarlo dashboard
+web: ./montecarlo dashboard
