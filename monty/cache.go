@@ -44,27 +44,33 @@ func (self *Memory) GetPullRequests(repo *Repo) []PullRequest {
 	ret := make([]PullRequest, 0)
 
 	for _, id := range ids {
-		val, err := self.redis.HGetAllMap(fmt.Sprintf("pr:%v/%v", *repo.FullName, id)).Result()
-
+		num, err := strconv.Atoi(id)
 		if err != nil {
 			panic(err)
 		}
-
-		num, err := strconv.Atoi(val["Number"])
-
-		if err != nil {
-			panic(err)
-		}
-
-		ret = append(ret, PullRequest{
-			Number:     num,
-			SHA:        val["SHA"],
-			Body:       val["Body"],
-			User:       val["User"],
-			Title:      val["Title"],
-			Repository: repo,
-		})
+		ret = append(ret, *self.GetPullRequest(repo, num))
 	}
 
 	return ret
+}
+
+func (self *Memory) GetPullRequest(repo *Repo, num int) *PullRequest {
+	val, err := self.redis.HGetAllMap(fmt.Sprintf("pr:%v/%v", *repo.FullName, num)).Result()
+
+	if err != nil {
+		panic(err)
+	}
+
+	if err != nil {
+		panic(err)
+	}
+
+	return &PullRequest{
+		Number:     num,
+		SHA:        val["SHA"],
+		Body:       val["Body"],
+		User:       val["User"],
+		Title:      val["Title"],
+		Repository: repo,
+	}
 }

@@ -6,8 +6,8 @@ import (
 
 type Review struct {
 	Condition     Condition
-	PullRequest   PullRequest
-	Repository    Repo
+	PullRequest   *PullRequest
+	Repository    *Repo
 	Comments      []github.IssueComment
 	BuildStatuses *github.CombinedStatus
 }

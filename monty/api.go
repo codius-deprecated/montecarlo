@@ -57,20 +57,34 @@ type GithubHookResource struct {
 	brain *Brain
 }
 
+type GithubResponse struct {
+	Message string
+}
+
 func (self *GithubHookResource) handleHook(request *restful.Request, response *restful.Response) {
-	self.brain.SyncRepositories()
-	reviews := self.brain.ReviewPRs()
-	for _, review := range reviews {
-		if review.Condition.Passed {
-			fmt.Printf("Merging %s!\n", review)
-		}
+	switch request.Request.Header.Get("x-github-event") {
+	case "status":
+		go self.brain.ReviewPRs()
+	case "issue_comment":
+		go self.brain.ReviewPRs()
+	case "pull_request":
+		self.brain.SyncRepositories()
+		go self.brain.ReviewPRs()
+	case "push":
+		go self.brain.ReviewPRs()
+	case "ping":
+		go self.brain.SyncRepositories()
 	}
+	response.WriteEntity(GithubResponse{
+		Message: "OK",
+	})
 }
 
 func (self *GithubHookResource) Register(container *restful.Container) {
 	ws := new(restful.WebService)
 	ws.Path("/github-hook").
-		Doc("Github hook")
+		Doc("Github hook").
+		Produces(restful.MIME_JSON)
 	ws.Route(ws.POST("").
 		To(self.handleHook).
 		Doc("Handle github hook"))

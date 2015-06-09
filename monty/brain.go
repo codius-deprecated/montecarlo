@@ -40,6 +40,14 @@ func (self *Brain) SyncRepositories() {
 	}
 }
 
+func (self *Brain) MergePRs(reviews []Review) {
+	for _, review := range reviews {
+		if review.Condition.Passed {
+			log.Printf("Merging %v!", review.PullRequest.ID())
+		}
+	}
+}
+
 func (self *Brain) ReviewPRs() []Review {
 
 	log.Printf("Reviewing all PRs")
@@ -50,7 +58,7 @@ func (self *Brain) ReviewPRs() []Review {
 		prs := self.memory.GetPullRequests(&repo)
 
 		for _, pr := range prs {
-			review := self.ReviewPR(repo, pr)
+			review := self.ReviewPR(&pr)
 			ret = append(ret, review)
 		}
 	}
@@ -58,18 +66,22 @@ func (self *Brain) ReviewPRs() []Review {
 	return ret
 }
 
-func (self *Brain) ReviewPR(repo Repo, pr PullRequest) Review {
+func (self *Brain) GetPR(repo *Repo, num int) *PullRequest {
+	return self.memory.GetPullRequest(repo, num)
+}
 
-	log.Printf("Reviewing %v/%v", *repo.FullName, pr.Number)
+func (self *Brain) ReviewPR(pr *PullRequest) Review {
 
-	comments, _, _ := self.client.Issues.ListComments(*repo.Owner,
-		*repo.Name, pr.Number, nil)
+	log.Printf("Reviewing %v/%v", *pr.Repository.FullName, pr.Number)
 
-	buildStatuses, _, _ := self.client.Repositories.GetCombinedStatus(*repo.Owner,
-		*repo.Name, pr.SHA, nil)
+	comments, _, _ := self.client.Issues.ListComments(*pr.Repository.Owner,
+		*pr.Repository.Name, pr.Number, nil)
+
+	buildStatuses, _, _ := self.client.Repositories.GetCombinedStatus(*pr.Repository.Owner,
+		*pr.Repository.Name, pr.SHA, nil)
 
 	review := Review{
-		Repository:    repo,
+		Repository:    pr.Repository,
 		PullRequest:   pr,
 		Comments:      comments,
 		BuildStatuses: buildStatuses,
