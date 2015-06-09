@@ -8,6 +8,7 @@ import (
 	"github.com/mgutz/ansi"
 	"golang.org/x/oauth2"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -76,7 +77,13 @@ func main() {
 			Name:  "dashboard",
 			Usage: "Serves report data through a local REST api",
 			Action: func(c *cli.Context) {
-				monty.NewRestServer(robot).Run()
+				port := 8080
+
+				if len(os.Getenv("PORT")) > 0 {
+					port, _ = strconv.Atoi(os.Getenv("PORT"))
+				}
+
+				monty.NewRestServer(robot, port).Run()
 			},
 		},
 		{

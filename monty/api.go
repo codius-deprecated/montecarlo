@@ -13,6 +13,7 @@ type RestServer struct {
 	server     *http.Server
 	brain      *Brain
 	staticRoot string
+	port       int
 }
 
 type ProjectStatusResource struct {
@@ -52,7 +53,31 @@ func (self *RestServer) serveIndex(request *restful.Request, response *restful.R
 	http.ServeFile(response.ResponseWriter, request.Request, actual)
 }
 
-func NewRestServer(brain *Brain) *RestServer {
+type GithubHookResource struct {
+	brain *Brain
+}
+
+func (self *GithubHookResource) handleHook(request *restful.Request, response *restful.Response) {
+	self.brain.SyncRepositories()
+	reviews := self.brain.ReviewPRs()
+	for _, review := range reviews {
+		if review.Condition.Passed {
+			fmt.Printf("Merging %s!\n", review)
+		}
+	}
+}
+
+func (self *GithubHookResource) Register(container *restful.Container) {
+	ws := new(restful.WebService)
+	ws.Path("/github-hook").
+		Doc("Github hook")
+	ws.Route(ws.POST("").
+		To(self.handleHook).
+		Doc("Handle github hook"))
+	container.Add(ws)
+}
+
+func NewRestServer(brain *Brain, port int) *RestServer {
 	ret := new(RestServer)
 	ret.staticRoot = "./static"
 
@@ -67,13 +92,18 @@ func NewRestServer(brain *Brain) *RestServer {
 		To(ret.serveIndex))
 	wsContainer.Add(staticService)
 
+	githubResource := GithubHookResource{brain: brain}
+	githubResource.Register(wsContainer)
+
 	ret.brain = brain
 
-	ret.server = &http.Server{Addr: ":8080", Handler: wsContainer}
+	ret.port = port
+	ret.server = &http.Server{Addr: fmt.Sprintf(":%v", port), Handler: wsContainer}
 	return ret
 }
 
 func (self *RestServer) Run() {
+	log.Printf("Server is listening on *:%v", self.port)
 	restful.TraceLogger(log.New(os.Stdout, "[rest] ", log.LstdFlags|log.Lshortfile))
 	self.server.ListenAndServe()
 }
