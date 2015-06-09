@@ -100,7 +100,7 @@ func NewRestServer(brain *Brain, port int) *RestServer {
 	statusResource.Register(wsContainer)
 
 	staticService := new(restful.WebService)
-	staticService.Path("/ui").
+	staticService.Path("/").
 		Doc("Static UI files")
 	staticService.Route(staticService.GET("{subpath:*}").
 		To(ret.serveIndex))

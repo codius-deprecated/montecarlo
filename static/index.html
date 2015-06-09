@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.5.0/css/foundation.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="style.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
+<script src="index.js"></script>
+<script id="build-row-template" type="text/x-handlebars-template">
+<div class="row pull-request" data-passed="{{Condition.Passed}}">
+  <div class="small-9 columns">
+  <div class="row">
+    <div class="small-12 columns">
+      <h2>
+        <a href="{{PullRequest.html_url}}">
+        <i class="fa fa-github"></i>
+        {{PullRequest.Number}} - {{PullRequest.Title}}</a>
+      </h2>
+    </div>
+    </div>
+    <div class="row">
+      <div class="small-12 columns">
+        <i class="fa fa-code-fork"></i>
+        <a href="https://github.com/{{Repository.FullName}}">{{Repository.FullName}}</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="small-12 columns">
+        {{#each BuildStatuses.statuses}}
+          <span class="build-status alert-box radius">
+            <a href="{{target_url}}">{{context}}: {{description}}</a>
+          </span>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+  <div class="small-3 columns">
+    <ul class="inline-list reasons">
+      {{#each Condition.Subconditions}}
+        {{#if Passed}}
+          <span class="alert-box success radius">
+          🎉
+        {{else}}
+          <span class="alert-box alert radius">
+          <i class="fa fa-exclamation-circle"></i>
+        {{/if}}
+          {{Name}}: {{Message}}
+        </span>
+      {{/each}}
+    </ul>
+  </div>
+</div>
+</script>
+<body>
+<div class="row">
+  <div class="small-12 columns">
+    <h1>Pull requests</h1>
+
+    <div id="pull-requests">
+      <div id="loader" class="row">
+        <div class="small-12 columns">
+          Thinking...
+        </div>
+        <div class="spinner">
+          <div class="cube1"></div>
+          <div class="cube2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</html>
