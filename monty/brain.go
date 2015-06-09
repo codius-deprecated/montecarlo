@@ -3,6 +3,7 @@ package monty
 import (
 	"fmt"
 	"github.com/google/go-github/github"
+	"gopkg.in/redis.v3"
 	"log"
 )
 
@@ -33,16 +34,16 @@ type Review struct {
 	BuildStatuses *github.CombinedStatus
 }
 
-func NewBrain(client *github.Client) *Brain {
+func NewBrain(client *github.Client, redisOptions *redis.Options) *Brain {
 	ret := new(Brain)
-	ret.memory = NewMemory()
+	ret.memory = NewMemory(redisOptions)
 	ret.client = client
 	ret.repos = NewRepolist(client)
 	return ret
 }
 
 func (self *Brain) SyncRepositories() {
-	//self.repos.EnableHooks()
+	self.repos.EnableHooks()
 
 	for _, repo := range *self.repos.List() {
 		prs, _, _ := self.client.PullRequests.List(*repo.Owner, *repo.Name, nil)

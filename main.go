@@ -7,6 +7,8 @@ import (
 	"github.com/google/go-github/github"
 	"github.com/mgutz/ansi"
 	"golang.org/x/oauth2"
+	"gopkg.in/redis.v3"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -48,7 +50,21 @@ func main() {
 	tc := oauth2.NewClient(oauth2.NoContext, ts)
 	client := github.NewClient(tc)
 
-	robot := monty.NewBrain(client)
+	redisURL, err := url.Parse(os.Getenv("REDISCLOUD_URL"))
+
+	if err != nil || len(os.Getenv("REDISCLOUD_URL")) == 0 {
+		panic("REDISCLOUD_URL not set")
+	}
+
+	addr := redisURL.Host
+	passwd, _ := redisURL.User.Password()
+
+	options := redis.Options{
+		Addr:     addr,
+		Password: passwd,
+	}
+
+	robot := monty.NewBrain(client, &options)
 
 	app := cli.NewApp()
 
@@ -68,7 +84,7 @@ func main() {
 				reviews := robot.ReviewPRs()
 				for _, review := range reviews {
 					if review.Condition.Passed {
-						fmt.Printf("Merging %s\n", review)
+						fmt.Printf("Merging %s!\n", review)
 					}
 				}
 			},

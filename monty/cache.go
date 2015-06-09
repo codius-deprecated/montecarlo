@@ -11,7 +11,7 @@ type Memory struct {
 	redis *redis.Client
 }
 
-func NewMemory() *Memory {
+func NewMemory(options *redis.Options) *Memory {
 	ret := new(Memory)
 	ret.redis = redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
