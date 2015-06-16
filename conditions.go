@@ -18,31 +18,42 @@ func (self *Condition) Add(cond Condition) {
 	self.Subconditions = append(self.Subconditions, cond)
 }
 
-func extractLGTMs(s *string) int {
-	sum := 0
+func hasLGTM(s *string) bool {
 	for _, line := range strings.Split(*s, "\n") {
 		if strings.Contains(line, "LGTM") || strings.Contains(line, ":+1:") {
-			sum++
+			return true
 		}
 	}
-	return sum
+	return false
 }
 
 func ReviewLGTMs(review Review) Condition {
-	lgtmCount := 0
+	passed := false
+	subs := make([]Condition, 0)
 
 	for _, comment := range review.Comments {
-		lgtmCount += extractLGTMs(comment.Body)
+		if hasLGTM(comment.Body) {
+			subs = append(subs, Condition{
+				Name:    "+1",
+				Message: fmt.Sprintf("from %s", *comment.User.Login),
+				Passed:  true,
+			})
+			passed = true
+		}
 	}
 
 	return Condition{
-		Name:    "+1s",
-		Message: fmt.Sprintf("%v/%v", lgtmCount, 1),
-		Passed:  lgtmCount >= 1,
+		Name:          "+1s",
+		Message:       fmt.Sprintf("%v/%v", len(subs), 1),
+		Passed:        passed,
+		Subconditions: subs,
 	}
 }
 
 func ReviewCommands(review Review) Condition {
+
+	reviewRequestor := "nobody"
+
 	commands := make([]command, 0)
 	for _, cmds := range extractCommands(&review.PullRequest.Body) {
 		commands = append(commands, command{&review.PullRequest.User, strings.Split(cmds, " ")})
@@ -59,6 +70,7 @@ func ReviewCommands(review Review) Condition {
 	for _, cmd := range commands {
 		if cmd.Args[0] == "+r" && len(cmd.Args) == 1 {
 			reviewRequested = true
+			reviewRequestor = *cmd.Owner
 		} else if cmd.Args[0] == "-r" && len(cmd.Args) == 1 {
 			reviewRequested = false
 		} else {
@@ -69,9 +81,8 @@ func ReviewCommands(review Review) Condition {
 	return Condition{
 		Name:    "Review requested",
 		Passed:  reviewRequested,
-		Message: fmt.Sprintf("%v", reviewRequested),
+		Message: fmt.Sprintf("%v, by %v", reviewRequested, reviewRequestor),
 	}
-
 }
 
 func ReviewBuildStatus(review Review) Condition {
