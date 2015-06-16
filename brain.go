@@ -72,7 +72,7 @@ func (self *Brain) GetPR(repo *Repo, num int) *PullRequest {
 
 func (self *Brain) ReviewPR(pr *PullRequest) Review {
 
-	log.Printf("Reviewing %v/%v", *pr.Repository.FullName, pr.Number)
+	log.Printf("Reviewing %v", pr.ID())
 
 	comments, _, _ := self.client.Issues.ListComments(*pr.Repository.Owner,
 		*pr.Repository.Name, pr.Number, nil)
@@ -81,7 +81,6 @@ func (self *Brain) ReviewPR(pr *PullRequest) Review {
 		*pr.Repository.Name, pr.SHA, nil)
 
 	review := Review{
-		Repository:    pr.Repository,
 		PullRequest:   pr,
 		Comments:      comments,
 		BuildStatuses: buildStatuses,
