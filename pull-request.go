@@ -10,7 +10,7 @@ type PullRequest struct {
 	Body       string
 	User       string
 	Title      string
-	Repository *Repo
+	Repository Repo
 }
 
 func (self *PullRequest) ID() string {

@@ -67,6 +67,6 @@ func (self *Memory) GetPullRequest(repo *Repo, num int) *PullRequest {
 		Body:       val["Body"],
 		User:       val["User"],
 		Title:      val["Title"],
-		Repository: repo,
+		Repository: *repo,
 	}
 }

@@ -32,7 +32,7 @@ func (self *Brain) SyncRepositories() {
 				User:       *pr.User.Login,
 				Title:      *pr.Title,
 				SHA:        *pr.Head.SHA,
-				Repository: &repo,
+				Repository: repo,
 			}
 
 			self.memory.RememberPullRequest(&newPR)
