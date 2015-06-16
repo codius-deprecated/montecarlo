@@ -1,9 +1,11 @@
 package monty
 
 import (
+	"bytes"
 	"github.com/google/go-github/github"
 	"gopkg.in/redis.v3"
 	"log"
+	"text/template"
 )
 
 type Brain struct {
@@ -18,6 +20,83 @@ func NewBrain(client *github.Client, redisOptions *redis.Options) *Brain {
 	ret.client = client
 	ret.repos = NewRepolist(client)
 	return ret
+}
+
+type Feedback struct {
+	Count  uint
+	People []string
+}
+
+func buildComment(review Review) string {
+
+	feedback, err := template.New("feedback").
+		Parse("I've reviewed this pull request:\n\n" +
+		"{{template \"subconditions\" .Condition.Subconditions}}")
+
+	if err != nil {
+		panic(err)
+	}
+
+	feedback, err = feedback.Parse(
+		"{{define \"subconditions\"}}" +
+			"{{range .}} ✔ {{.Name}}: {{.Message}}\n" +
+			"{{template \"subconditions\" .Subconditions}}" +
+			"{{end}}" +
+			"{{end}}")
+
+	if err != nil {
+		panic(err)
+	}
+
+	var feedbackBuf bytes.Buffer
+	err = feedback.Execute(&feedbackBuf, review)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return feedbackBuf.String()
+}
+
+func buildCommitMessage(review Review) string {
+	commitTemplate, err := template.New("commit").
+		Parse("Automatic merge after review:\n\n" +
+		"{{template \"subconditions\" .Condition.Subconditions}}" +
+		"{{define \"subconditions\"}}" +
+		"{{range .}} ✔ {{.Name}}: {{.Message}}\n" +
+		"{{template \"subconditions\" .Subconditions}}" +
+		"{{end}}" +
+		"{{end}}")
+
+	if err != nil {
+		panic(err)
+	}
+
+	var commitBuf bytes.Buffer
+	err = commitTemplate.Execute(&commitBuf, review)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return commitBuf.String()
+}
+
+func (self *Brain) MergeReview(review Review) {
+	if !review.Condition.Passed {
+		panic("Review not passed!")
+	}
+
+	reviewFeedback := buildComment(review)
+	commitMessage := buildCommitMessage(review)
+
+	log.Printf("Commenting with %v", reviewFeedback)
+	log.Printf("Merging with %v", commitMessage)
+
+	self.client.Issues.CreateComment(*review.PullRequest.Repository.Owner, *review.PullRequest.Repository.Name, review.PullRequest.Number, &github.IssueComment{
+		Body: &reviewFeedback,
+	})
+	self.client.PullRequests.Merge(*review.PullRequest.Repository.Owner, *review.PullRequest.Repository.Name, review.PullRequest.Number, commitMessage)
 }
 
 func (self *Brain) SyncRepositories() {
