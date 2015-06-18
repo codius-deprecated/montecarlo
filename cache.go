@@ -49,7 +49,12 @@ func (self *Memory) GetPullRequests(repo *Repo) []PullRequest {
 		if err != nil {
 			panic(err)
 		}
-		ret = append(ret, *self.GetPullRequest(repo, num))
+
+		pr := self.GetPullRequest(repo, num)
+
+		if !pr.Merged {
+			ret = append(ret, *pr)
+		}
 	}
 
 	return ret
