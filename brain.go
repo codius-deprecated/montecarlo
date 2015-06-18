@@ -2,6 +2,7 @@ package monty
 
 import (
 	"bytes"
+	"github.com/amyangfei/redlock-go/redlock"
 	"github.com/google/go-github/github"
 	"gopkg.in/redis.v3"
 	"log"
@@ -12,11 +13,17 @@ type Brain struct {
 	client *github.Client
 	repos  *RepositoryList
 	memory *Memory
+	lock   *redlock.RedLock
 }
 
 func NewBrain(client *github.Client, redisOptions *redis.Options) *Brain {
 	ret := new(Brain)
 	ret.memory = NewMemory(redisOptions)
+	lock, err := redlock.NewRedLock([]string{redisOptions.Addr})
+	if err != nil {
+		panic(err)
+	}
+	ret.lock = lock
 	ret.client = client
 	ret.repos = NewRepolist(client)
 	return ret
@@ -145,11 +152,28 @@ func (self *Brain) ReviewPRs() []Review {
 	return ret
 }
 
+func (self *Brain) GetPRs() []PullRequest {
+	ret := make([]PullRequest, 0)
+	for _, repo := range *self.repos.List() {
+		prs := self.memory.GetPullRequests(&repo)
+		for _, pr := range prs {
+			ret = append(ret, pr)
+		}
+	}
+	return ret
+}
+
 func (self *Brain) GetPR(repo *Repo, num int) *PullRequest {
 	return self.memory.GetPullRequest(repo, num)
 }
 
 func (self *Brain) ReviewPR(pr *PullRequest) Review {
+
+	_, err := self.lock.Lock(pr.ID(), 5000)
+
+	if err != nil {
+		panic(err)
+	}
 
 	log.Printf("Reviewing %v", pr.ID())
 
@@ -178,6 +202,8 @@ func (self *Brain) ReviewPR(pr *PullRequest) Review {
 	} else {
 		review.Condition.Message = "Not all conditions are met"
 	}
+
+	self.lock.UnLock()
 
 	return review
 }
