@@ -18,6 +18,10 @@ func NewMemory(options *redis.Options) *Memory {
 }
 
 func (self *Memory) RememberPullRequest(pr *PullRequest) {
+	merged := "false"
+	if pr.Merged {
+		merged = "true"
+	}
 	self.redis.HMSet(fmt.Sprintf("pr:%v", pr.ID()),
 		"SHA", pr.SHA,
 		"Body", pr.Body,
@@ -25,9 +29,10 @@ func (self *Memory) RememberPullRequest(pr *PullRequest) {
 		"Title", pr.Title,
 		"Number", strconv.Itoa(pr.Number),
 		"Repo.Owner", *pr.Repository.Owner,
-		"Repo.Name", *pr.Repository.Name)
-	log.Printf("Remembered: %v", pr.ID())
+		"Repo.Name", *pr.Repository.Name,
+		"Merged", merged)
 	self.redis.SAdd(fmt.Sprintf("pull-requests:%s", *pr.Repository.FullName), strconv.Itoa(pr.Number))
+	log.Printf("Remembered: %v", pr.ID())
 }
 
 func (self *Memory) GetPullRequests(repo *Repo) []PullRequest {
@@ -61,6 +66,12 @@ func (self *Memory) GetPullRequest(repo *Repo, num int) *PullRequest {
 		panic(err)
 	}
 
+	merged := true
+
+	if val["Merged"] != "true" {
+		merged = false
+	}
+
 	return &PullRequest{
 		Number:     num,
 		SHA:        val["SHA"],
@@ -68,5 +79,6 @@ func (self *Memory) GetPullRequest(repo *Repo, num int) *PullRequest {
 		User:       val["User"],
 		Title:      val["Title"],
 		Repository: *repo,
+		Merged:     merged,
 	}
 }

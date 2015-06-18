@@ -11,6 +11,7 @@ type PullRequest struct {
 	User       string
 	Title      string
 	Repository Repo
+	Merged     bool
 }
 
 func (self *PullRequest) ID() string {
