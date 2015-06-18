@@ -109,19 +109,38 @@ func (self *Brain) MergeReview(review Review) {
 func (self *Brain) SyncRepositories() {
 	self.repos.EnableHooks()
 
-	for _, repo := range *self.repos.List() {
-		prs, _, _ := self.client.PullRequests.List(*repo.Owner, *repo.Name, nil)
-		for _, pr := range prs {
-			newPR := PullRequest{
-				Number:     *pr.Number,
-				Body:       *pr.Body,
-				User:       *pr.User.Login,
-				Title:      *pr.Title,
-				SHA:        *pr.Head.SHA,
-				Repository: repo,
-			}
+	opts := github.PullRequestListOptions{
+		State: "all",
+	}
 
-			self.memory.RememberPullRequest(&newPR)
+	opts.ListOptions.PerPage = 100
+
+	for _, repo := range *self.repos.List() {
+		opts.ListOptions.Page = 1
+		for true {
+			prs, _, _ := self.client.PullRequests.List(*repo.Owner, *repo.Name, &opts)
+			for _, pr := range prs {
+				merged := false
+				if pr.Merged != nil && *pr.Merged {
+					merged = true
+				}
+				newPR := PullRequest{
+					Number:     *pr.Number,
+					Body:       *pr.Body,
+					User:       *pr.User.Login,
+					Title:      *pr.Title,
+					SHA:        *pr.Head.SHA,
+					Repository: repo,
+					Merged:     merged,
+				}
+
+				self.memory.RememberPullRequest(&newPR)
+			}
+			if len(prs) == opts.ListOptions.PerPage {
+				opts.ListOptions.Page += 1
+			} else {
+				break
+			}
 		}
 	}
 }
